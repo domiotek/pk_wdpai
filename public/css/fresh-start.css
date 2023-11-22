@@ -1,0 +1,88 @@
+.title {
+    margin-bottom: 0;
+}
+
+.subtitle {
+    margin-top: 0;
+    color: var(--brighter-font-color);
+}
+
+.SectionsWrapper {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+section {
+    background: var(--bg-1);
+    padding: 1.5rem;
+    border-radius: 0.5rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    box-shadow: 1px 1px 4px 0 #7b7a7a5e;
+}
+
+section h3 {
+    margin-top: 0;
+}
+
+section form {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+}
+
+section form button {
+    align-self: flex-end;
+}
+
+.SectionDivider {
+    color: var(--brighter-font-color);
+    position: relative;
+}
+
+.SectionDivider::before, .SectionDivider::after {
+    content: "";
+    position: absolute;
+    height: 1px;
+    width: 50px;
+    background-color: var(--brighter-font-color);
+    top: calc(50%);
+    left: -60px;
+}
+
+.SectionDivider::after {
+    left: calc(100% + 10px);
+}
+
+
+@media screen and (min-width: 376px) {
+    section {
+        width: 100%;
+        max-width: 300px;
+    }
+}
+
+@media screen and (min-width: 769px) {
+    .SectionsWrapper {
+        flex-direction: row;
+        justify-content: center;
+        margin-top: 6rem;
+    }
+
+    .SectionDivider {
+        margin: 0 4.5rem;
+    }
+} 
+
+@media screen and (min-width: 1025px) {
+    main {
+        max-width: 1000px;
+        margin: auto;
+    }
+
+    .SectionDivider {
+        margin: 0 6.5rem;
+    }
+}

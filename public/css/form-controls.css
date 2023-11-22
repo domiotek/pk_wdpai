@@ -1,7 +1,7 @@
 input {
     margin: 0.5rem 0 1.5rem;
     padding: 0.75rem 0.5rem;
-    background: var(--primary-light-2-color);
+    background: var(--third-light-2-color);
     border: none;
     box-shadow: 1px 1px 10px 0 #4d4d4d33;
     border-radius: 0.5rem;
@@ -27,7 +27,7 @@ input {
 	font-size: 1.25em;
     height: 1em;
     width: 1em;
-    background-color: var(--primary-light-2-color);
+    background-color: var(--third-light-2-color);
     box-shadow: 1px 1px 10px 0 #4d4d4d33;
 	margin-right: 0.5em;
 	border-radius: 5px;
