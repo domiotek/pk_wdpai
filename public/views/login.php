@@ -14,7 +14,14 @@
 <body>
     <div class="ContentWrapper">
         <img src="/public/img/logo.png" alt="Logo">
-        <form class="LoginForm">
+        <p>
+            <?php 
+                if(isset($message)) {
+                    echo $message;
+                }
+            ?>
+        </p>
+        <form class="LoginForm" method="POST" action="login">
             <label for="emailInput">Email</label>
             <input id="emailInput" name="username" type="email">
 
