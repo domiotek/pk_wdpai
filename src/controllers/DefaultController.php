@@ -11,4 +11,16 @@ class DefaultController extends AppController {
     public function freshStart() {
         $this->render("freshStart");
     }
+
+    public function dashboard() {
+        $this->render("dashboard");
+    }
+
+    public function d() {
+        $this->render("tasknNotes");
+    }
+
+    public function group() {
+        $this->render(("group"));
+    }
 }

@@ -1,0 +1,89 @@
+.TargetListSwitcher {
+    margin: auto;
+    width: 90px;
+    background: #D9D9D9;
+    background: var(--third-light-2-color);
+    border-radius: 5rem;
+    display: flex;
+    align-items: center;
+    height: 30px;
+    justify-content: space-between;
+    position: relative;
+    padding: 0 2.5px;
+}
+
+.TargetListSwitcher img {
+    z-index: 2;
+}
+
+.TargetListSwitcher span {
+    position: absolute;
+    height: 100%;
+    width: 30px;
+    background: var(--primary-color);
+    border-radius: 50%;
+    z-index: 1;
+    left: 0;
+    /* left: calc(100% - 30px); */
+    transition: left 0.5s;
+}
+
+.ListWrapper {
+    margin-top: 3rem;
+}
+
+.EntityList {
+    display: none;
+}
+
+.EntityList > h3 {
+    display: none;
+}
+
+
+
+#AddEntityButton {
+    position: fixed;
+    bottom: 4.5rem;
+    right: 1rem;
+    border-radius: 50%;
+    padding: 0;
+    width: 3rem;
+    height: 3rem;
+}
+
+.InSectionAddEntityButton {
+    display: inline-block;
+    font-size: 0.6em;
+    padding: 0.6em 1em;
+    border-radius: 5rem;
+    background: var(--secondary-color);
+    color: white;
+    margin-left: auto;
+}
+
+
+@media screen and (min-width: 1160px) {
+    #AddEntityButton {
+        display: none;
+    }
+
+    .ListWrapper {
+        display: flex;
+        flex-wrap: wrap;
+    }
+
+    .EntityList {
+        display: block;
+    }
+
+    .EntityList > h3 {
+        display: flex;
+    }
+
+    .TargetListSwitcher {
+        display: none;
+    }
+
+
+}
