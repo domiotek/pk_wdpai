@@ -13,8 +13,39 @@ class AppController {
     }
 
     protected function isPost(): bool {
-        print_r($_SERVER["REQUEST_METHOD"]);
         return $_SERVER["REQUEST_METHOD"]==="POST";
+    }
+
+    protected function isAuthenticated(): bool {
+        if(!isset($_COOKIE["session"])) {
+            return false;
+        }
+
+        $token = $_COOKIE["session"];
+
+        $sessions = new SessionRepository();
+        $session = $sessions->getSession($token);
+
+        if ($session) {
+            if($session->isValid()) {
+                $sessions->touchSession($token);
+
+                if(!isset($_COOKIE["short-lived-session"])) {
+                    setcookie("session", $token, strtotime("+7 days"));
+                }
+
+                return true;
+            }
+
+            setcookie("session","");
+        }
+
+        return false; 
+    }
+
+    protected function redirect(string $url): void {
+        header("Location: ". $url);
+        die();
     }
 
     protected function render(string $template = null, array $variables = []) {

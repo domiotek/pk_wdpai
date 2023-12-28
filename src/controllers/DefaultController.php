@@ -5,15 +5,25 @@ require_once 'AppController.php';
 class DefaultController extends AppController {
 
     public function index() {
-        $this->render('login');
+        $this->redirect("dashboard");
     }
 
     public function freshStart() {
-        $this->render("freshStart");
+
+        if($this->isAuthenticated()) {
+            $this->render("freshStart");
+        }else {
+            $this->redirect("login?r=session_expired");
+        }
     }
 
     public function dashboard() {
-        $this->render("dashboard");
+
+        if($this->isAuthenticated()) {
+            $this->render("dashboard");
+        }else {
+            $this->redirect("login?r=session_expired");
+        }
     }
 
     public function d() {

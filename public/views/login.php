@@ -30,7 +30,7 @@
 
             <label class="checkbox">
                 Remember me
-                <input type="checkbox">
+                <input type="checkbox" name="rememberMe">
                 <span class="checkmark"></span>
 
             </label>

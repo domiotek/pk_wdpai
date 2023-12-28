@@ -1,17 +1,23 @@
 <?php
 
 class User {
-    private $email;
-    private $password;
-    private $name;
-    private $surname;
+    private int $userID;
+    private string $email;
+    private string $passwordHash;
+    private string $name;
+    private string $createdAt;
 
 
-    public function __construct(string $email,string $password,string $name,string $surname) {
+    public function __construct(int $userID, string $email, string $password, string $name, string $createdAt) {
+        $this->userID = $userID;
         $this->email = $email;
-        $this->password = $password;
+        $this->passwordHash = $password;
         $this->name = $name;
-        $this->surname = $surname;
+        $this->createdAt= $createdAt;
+    }
+
+    public function getID() {
+        return $this->userID;
     }
 
     public function getEmail() {
@@ -22,12 +28,12 @@ class User {
         $this->email = $newVal;
     }
 
-    public function getPassword() {
-        return $this->password;
+    public function getPasswordHash() {
+        return $this->passwordHash;
     }
 
     public function setPassword(string $newVal) {
-        $this->password = $newVal;
+        $this->passwordHash = $newVal;
     }
     public function getName() {
         return $this->name;
@@ -37,13 +43,8 @@ class User {
         $this->name = $newVal;
     }
 
-    public function getSurname() {
-        return $this->surname;
+    public function getCreatedAt() {
+        return $this->createdAt;
     }
-
-    public function setSurname(string $newVal) {
-        $this->surname = $newVal;
-    }
-
 }
 
