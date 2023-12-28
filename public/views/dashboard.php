@@ -16,7 +16,9 @@
 </head>
 <body>
     <header>
-        <img src="/public/img/logo.png" alt="Logo">
+        <a href="/dashboard">
+            <img src="/public/img/logo.png" alt="Logo">
+        </a>
         <button type="button" id="HeaderUserButton" title="User">
             <i class="fa-regular fa-user"></i>
         </button>

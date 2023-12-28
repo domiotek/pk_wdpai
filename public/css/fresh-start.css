@@ -1,3 +1,11 @@
+header > a {
+    width: 48px;
+}
+
+header > a > img {
+    width: 100%;
+}
+
 .title {
     margin-bottom: 0;
 }

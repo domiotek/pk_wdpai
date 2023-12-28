@@ -44,6 +44,14 @@ header {
     background: white;
 }
 
+header >a {
+    width: 48px;
+}
+
+header > a > img {
+    width: 100%;
+}
+
 .MainContent {
     flex:1;
     padding: 4rem 1rem 3.5rem;
