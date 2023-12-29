@@ -30,11 +30,12 @@
     margin: 0;
 }
 
-.PanelBody button {
+.PanelBody .button {
     font-size: 0.6rem;
     border-radius: 5rem;
     align-self: flex-end;
     background: var(--third-dark-1-color);
+    margin-top: auto;
 }
 
 .JoinSection {
@@ -78,4 +79,35 @@
 
 .RegenerateCodePrompt {
     margin: 0.8rem!important;
+}
+
+.UpdateNameForm {
+    padding: 0 0.5em;
+    display: flex;
+    margin: 0 0 2em;
+    align-items: center;
+}
+
+.UpdateNameForm > input {
+    margin: 0;
+    background: #aabda5;
+    box-shadow: none;
+}
+
+.UpdateNameForm > button {
+    margin-left: 1.5em;
+    font-size: 0.8em;
+    padding: 0.6em 1.5em;
+}
+
+.ErrorMessageBox {
+    background: var(--third-light-1-color);
+    border: solid 1px var(--third-dark-2-color);
+    padding: 0.5em 2em;
+    font-size: 0.8em;
+    text-align: center;
+    border-radius: 1em;
+    width: -moz-fit-content;
+    width: fit-content;
+    margin: auto;
 }

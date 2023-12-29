@@ -11,7 +11,7 @@ class UserRepository extends Repository {
         $field = "email";
 
         if(gettype($input)=="integer") {
-            $field = "userID";
+            $field = "\"userID\"";
         }
 
         $query = $conn->prepare("SELECT * FROM users WHERE $field=:val;");

@@ -19,17 +19,18 @@ class FormController extends AppController {
 
 
         if(strlen($name) < 2 || strlen($name) > 30 || sizeof($userGroups) >= 3) {
-            $groups = $groupRepository->getUserGroups($user);
-            $message = sizeof($userGroups) >= 3?"You already own maximum of 3 groups.":"Invalid group name.";
+            $errCode = sizeof($userGroups) >= 3?"cMaxGrp":"cInvName";
 
-            $this->render("addGroup",["createErrMessage"=>$message, "userGroups"=>$groups, "activeGroupID"=>$user->getActiveGroupID()]);
+            $this->redirect("new?r=$errCode");
             return;
         }
 
         $group = $groupRepository->createGroup($name);
         $groupRepository->addGroupMember($group, $user);
 
-        $groupRepository->makeMemberGroupOwner($group, $user);
+        $group->setOwnerUserID($user->getID());
+
+        $groupRepository->updateGroup($group);
 
         $user->setActiveGroupID($group->getID());
 
@@ -43,6 +44,10 @@ class FormController extends AppController {
             $this->redirect("new");
         }
 
+        if(!isset($_POST["code"])) { 
+            $this->redirect("new");
+        }
+
         $code = $_POST["code"];
         $user = $this->getSignedInUserID();
         $groupRepository = new GroupRepository();
@@ -51,10 +56,9 @@ class FormController extends AppController {
         $group = $groupRepository->getGroupByInvite($code);
 
         if($group==null || $groupRepository->isGroupMember($user, $group)) {
-            $groups = $groupRepository->getUserGroups($user);
-            $message = $group==null?"Invalid invitation code.":"You are already a member of that group.";
+            $errCode = $group==null?"jInvCode":"jAlrMemb";
 
-            $this->render("addGroup",["joinErrMessage"=>$message, "userGroups"=>$groups, "activeGroupID"=> $user->getActiveGroupID()]);
+            $this->redirect("new?r=$errCode");
             return;
             
         }
@@ -68,7 +72,7 @@ class FormController extends AppController {
     }
 
     public function switchToGroup() {
-        if(!$this->isAuthenticated()) {
+        if(!$this->isAuthenticated() || !isset($_REQUEST["target"])) {
             $this->redirect("home");
         }
 
@@ -87,5 +91,122 @@ class FormController extends AppController {
         $userRepository->updateUser($user);
 
         $this->redirect("home");
+    }
+
+    public function changeGroupName() {
+        if(!$this->isAuthenticated() || !isset($_REQUEST["name"])) {
+            $this->redirect("home");
+        }
+
+        if(!$this->isPost()) {
+            $this->redirect("group");
+        }
+
+        $newName = $_REQUEST["name"];
+        $user = $this->getSignedInUserID();
+        $groupRepository = new GroupRepository();
+
+        $group = $groupRepository->getGroup($user->getActiveGroupID());
+
+        if($group==null ||strlen($newName) < 2 || strlen($newName) > 30) {
+            $errCode = $group==null?"generic":"invName";
+
+            $this->redirect("group?r=$errCode");
+            return;
+        }
+
+        $group->setName($newName);
+        $groupRepository->updateGroup($group);
+
+        $this->redirect("group");
+    }
+
+    public function kickMember() {
+        if(!$this->isAuthenticated()||!isset($_REQUEST["target"])) {
+            $this->redirect("home");
+        }
+
+        $initiator = $this->getSignedInUserID();
+        $groupRepository = new GroupRepository();
+        $userRepository = new UserRepository();
+
+
+        $targetUser = $userRepository->getUser((int)$_REQUEST["target"]);
+        $targetGroup = $groupRepository->getGroup($initiator->getActiveGroupID());
+
+        $err = true;
+        $errMessage = "";
+        $errCode = "";
+        switch(true) {
+            case $targetGroup==null: $errCode = "noGroup"; break;
+            case $targetUser==null; $errCode = "noUser"; break;
+            case !$groupRepository->isGroupMember($targetUser, $targetGroup): $errCode="noMember"; break;
+            case $targetGroup->getOwnerUserID()!=$initiator->getID(): $errCode = "notOwner"; break;
+            case $targetUser->getID()==$initiator->getID(): $errCode = "cky"; break;
+            default: $err=false;
+        }
+
+        if($err) {
+            $this->redirect("gropu?r=$errCode");
+        }
+
+        $groupRepository->removeGroupMember($targetGroup, $targetUser);
+        if($targetUser->getActiveGroupID()==$targetGroup->getID()) {
+            $groups = $groupRepository->getUserGroups($targetUser);
+            if(sizeof($groups) > 0) {
+                $targetUser->setActiveGroupID($groups[0]->getID());
+            }else $targetUser->setActiveGroupID(null);
+
+            $userRepository->updateUser($targetUser);
+        }
+
+        $this->redirect("group");
+    }
+
+    public function leaveGroup() {
+        if(!$this->isAuthenticated()) {
+            $this->redirect("home");
+        }
+
+        $user = $this->getSignedInUserID();
+        $groupRepository = new GroupRepository();
+        $userRepository = new UserRepository();
+
+        $targetGroup = $groupRepository->getGroup($user->getActiveGroupID());
+
+        $err = true;
+        $errCode = "";
+        switch(true) {
+            case $targetGroup==null: $errCode = "noGroup"; break;
+            case !$groupRepository->isGroupMember($user, $targetGroup): $errCode = "noMemberYou"; break;
+            default: $err=false;
+        }
+
+        if($err) {
+            $this->redirect("group?r=$errCode");
+        }
+
+        $groupRepository->removeGroupMember($targetGroup, $user);
+        if($user->getActiveGroupID()==$targetGroup->getID()) {
+            $groups = $groupRepository->getUserGroups($user);
+            if(sizeof($groups) > 0) {
+                $user->setActiveGroupID($groups[0]->getID());
+            }else $user->setActiveGroupID(null);
+
+            $userRepository->updateUser($user);
+        }
+
+        if($targetGroup->getOwnerUserID()==$user->getID()) {
+            $members = $groupRepository->getGroupMembers($targetGroup);
+
+            if(sizeof($members) > 0) {
+                $targetGroup->setOwnerUserID($members[0]->getID());
+                $groupRepository->updateGroup($targetGroup);
+            }else {
+                $groupRepository->deleteGroup($targetGroup);
+            }
+        }
+
+        $this->redirect("group");
     }
 }

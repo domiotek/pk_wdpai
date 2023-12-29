@@ -12,6 +12,7 @@
     <link rel="stylesheet" href="/public//css//entity-panels.css">
     <link rel="stylesheet" href="/public/css/task-n-notes.css">
 
+    <script src="/public/js/stripURL.js"></script>
     <script src="/public/js/main.js" defer></script>
 
     <script src="https://kit.fontawesome.com/00b5fcc6a2.js" crossorigin="anonymous"></script>
@@ -119,10 +120,10 @@
             <?php 
                 if(isset($userGroups)&&isset($activeGroupID)&&sizeof($userGroups) > 0){
 
-                    foreach($userGroups as $group) {
-                        $name = $group->getName();
-                        $ID = $group->getID();
-                        echo "<a href='/switchToGroup?target=$ID' class='" . ($group->getID()==$activeGroupID?"active":"")  . "'>
+                    foreach($userGroups as $_group) {
+                        $name = $_group->getName();
+                        $ID = $_group->getID();
+                        echo "<a href='/switchToGroup?target=$ID' class='" . ($_group->getID()==$activeGroupID?"active":"")  . "'>
                                 $name
                                 <i class='fas fa-check'></i>
                             </a>";

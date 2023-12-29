@@ -9,6 +9,7 @@
     <link rel="stylesheet" href="/public/css/login.css">
     <link rel="stylesheet" href="/public//css//form-controls.css">
 
+    <script src="/public/js/stripURL.js"></script>
     <title>Taskmate</title>
 </head>
 <body>

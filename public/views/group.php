@@ -9,7 +9,9 @@
     <link rel="stylesheet" href="/public/css/main.css">
     <link rel="stylesheet" href="/public/css/main-layout.css">
     <link rel="stylesheet" href="/public/css/group.css">
+    <link rel="stylesheet" href="/public/css/form-controls.css">
 
+    <script src="/public/js/stripURL.js"></script>
     <script src="/public/js/main.js" defer></script>
 
     <script src="https://kit.fontawesome.com/00b5fcc6a2.js" crossorigin="anonymous"></script>
@@ -39,36 +41,59 @@
             </a>
         </nav>
         <section class="MainContent">
+            <?php if(isset($globalErrMessage)) echo "<p class='ErrorMessageBox'>$globalErrMessage</p>"; ?>
             <h2>Your group</h2>
+
+            <h3>Group name</h3>
+            <form class="UpdateNameForm" method="POST" action="changeGroupName">
+                <?php
+                    if(isset($changeNameErrMessage)) {
+                        echo "<p class='ErrorBox'>$changeNameErrMessage</p>";
+                    }
+                ?>
+                <input name="name" type="text" required minLength="2" maxLength="30" value="<?php if(isset($group)) echo $group->getName()?>">
+                <button>Update</button>
+            </form>
+
+            <h3>Members</h3>
             <section class="UserList">
-                <div class="UserPanel">
-                    <div class="UserImage">
-                        <i class="fa-regular fa-user"></i>
-                    </div>
-                    <div class="PanelBody">
-                        <h3>You (organizer)</h3>
-                    </div>
-                </div>
-                <div class="UserPanel">
-                    <div class="UserImage">
-                        <i class="fa-regular fa-user"></i>
-                    </div>
-                    <div class="PanelBody">
-                        <h3>Camila</h3>
-                        <h6>camila@gmail.com</h6>
-                        <button>Kick</button>
-                    </div>
-                </div>
-                <div class="UserPanel">
-                    <div class="UserImage">
-                        <i class="fa-regular fa-user"></i>
-                    </div>
-                    <div class="PanelBody">
-                        <h3>Robert</h3>
-                        <h6>robert@gmail.com</h6>
-                        <button>Kick</button>
-                    </div>
-                </div>
+                <?php 
+                    if(isset($groupMembers)) {
+                        $isSignedInUserOwner = $signedInUser->getID()==$ownerUserID;
+
+                        $leaveButton = "<a class='button' href='/leaveGroup'>Leave</a>";
+
+                        foreach($groupMembers as $groupMember) {
+                            $currentUserID = $groupMember->getID();
+                            $kickButton = "<a class='button' href='/kickMember?target=$currentUserID'>Kick</a>";
+
+                            $isSignedInUser = $signedInUser->getID()===$groupMember->getID();
+                            $ownsGroup = $groupMember->getID()===$ownerUserID;
+                            $name = $isSignedInUser?"You":$groupMember->getName();
+                            $emailLine = $isSignedInUser?"":"<h6>" . $groupMember->getEmail() . "</h6>";
+                            $organizerTag = $ownsGroup?"(Organizer)":"";
+                            
+                            if($isSignedInUser) {
+                                $button = $leaveButton;
+                            }else {
+                                $button = $isSignedInUserOwner?$kickButton:"";
+                            }     
+
+                            echo "
+                            <div class='UserPanel'>
+                                <div class='UserImage'>
+                                    <i class='fa-regular fa-user'></i>
+                                </div>
+                                <div class='PanelBody'>
+                                    <h3>$name $organizerTag</h3>
+                                    $emailLine
+                                    $button
+                                </div>
+                            </div>
+                            ";
+                        }
+                    }
+                ?>
             </section>
             <section class="JoinSection">
                 <h4>Want to add more people?</h4>
@@ -90,12 +115,12 @@
         <h4>Your groups <a href="/new">Add new</a></h4>
         <div class="GroupsHolder">
             <?php 
-                if(isset($userGroups)&&isset($activeGroupID)&&sizeof($userGroups) > 0){
+                if(isset($userGroups)&&isset($group)&&sizeof($userGroups) > 0){
 
-                    foreach($userGroups as $group) {
-                        $name = $group->getName();
-                        $ID = $group->getID();
-                        echo "<a href='/switchToGroup?target=$ID' class='" . ($group->getID()==$activeGroupID?"active":"")  . "'>
+                    foreach($userGroups as $_group) {
+                        $name = $_group->getName();
+                        $ID = $_group->getID();
+                        echo "<a href='/switchToGroup?target=$ID' class='" . ($_group->getID()==$group->getID()?"active":"")  . "'>
                                 $name
                                 <i class='fas fa-check'></i>
                             </a>";

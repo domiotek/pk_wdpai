@@ -18,5 +18,8 @@ Router::get("passwordTest","SecurityController");
 Router::get("createGroup","FormController");
 Router::get("joinGroup", "FormController");
 Router::get("switchToGroup","FormController");
+Router::get("changeGroupName", "FormController");
+Router::get("kickMember","FormController");
+Router::get("leaveGroup","FormController");
 
 Router::run($path);

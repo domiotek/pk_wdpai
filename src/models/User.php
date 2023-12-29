@@ -53,7 +53,7 @@ class User {
         return $this->activeGroupID;
     }
 
-    public function setActiveGroupID(int $activeGroupID) {
+    public function setActiveGroupID(int|null $activeGroupID) {
         $this->activeGroupID = $activeGroupID;
     }
 }

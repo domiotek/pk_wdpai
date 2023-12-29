@@ -5,12 +5,11 @@ require_once __DIR__ . "/../models/Group.php";
 
 class GroupRepository extends Repository {
 
-    private function getMemberID(User $user, Group $group): ?int {
+    private function getMemberID(int $userID, Group $group): ?int {
         $conn = $this->database->connect();
 
         $query = $conn->prepare("SELECT \"memberID\" FROM group_members WHERE \"groupID\"=:id AND \"userID\"=:user;");
 
-        $userID = $user->getID();
         $groupID = $group->getID();
         $query->bindParam(":id",$groupID, PDO::PARAM_INT);
         $query->bindParam(":user", $userID, PDO::PARAM_INT);
@@ -23,6 +22,26 @@ class GroupRepository extends Repository {
             return null;
 
         return $memberID["memberID"];
+    }
+
+    private function resolveMemberID(int|null $memberID) {
+
+        if(is_null($memberID)) return null;
+        
+        $conn = $this->database->connect();
+
+        $query = $conn->prepare("SELECT \"userID\" FROM group_members WHERE \"memberID\"=:member;");
+
+        $query->bindParam(":member", $memberID, PDO::PARAM_INT);
+
+        $query->execute();
+
+        $memberID = $query->fetch(PDO::FETCH_ASSOC);
+
+        if($memberID===false) 
+            return null;
+
+        return $memberID["userID"];
     }
 
     public function getGroup(int $ID): ?Group {
@@ -38,7 +57,35 @@ class GroupRepository extends Repository {
             return null;
         }
 
-        return new Group($groupData["groupID"],$groupData["name"], $groupData["createdAt"], $groupData["inviteCode"]);
+        return new Group($groupData["groupID"],$groupData["name"], $groupData["createdAt"], $groupData["inviteCode"], $this->resolveMemberID($groupData["ownerMemberID"]));
+    }
+
+    public function updateGroup(Group $group) {
+        $conn = $this->database->connect();
+
+        $memberID = $this->getMemberID($group->getOwnerUserID(), $group);
+        $groupID = $group->getID();
+        $name = $group->getName();
+        $inviteCode = $group->getInvitationCode();
+
+        $query = $conn->prepare("UPDATE groups SET name=:name, \"inviteCode\"=:code, \"ownerMemberID\"=:owner WHERE \"groupID\"=:group;");
+        $query->bindParam(":owner", $memberID, PDO::PARAM_INT);
+        $query->bindParam(":name", $name, PDO::PARAM_STR);
+        $query->bindParam(":group", $groupID, PDO::PARAM_INT);
+        $query->bindParam(":code", $inviteCode, PDO::PARAM_STR);
+
+        $query->execute();
+    }
+
+    public function deleteGroup(Group $group) {
+        $conn = $this->database->connect();
+
+        $groupID = $group->getID();
+
+        $query = $conn->prepare("DELETE FROM groups WHERE \"groupID\"=:group;");
+        $query->bindParam(":group", $groupID, PDO::PARAM_INT);
+
+        $query->execute();
     }
 
     public function getGroupByInvite(string $code): ?Group {
@@ -54,7 +101,7 @@ class GroupRepository extends Repository {
             return null;
         }
 
-        return new Group($groupData["groupID"],$groupData["name"], $groupData["createdAt"], $groupData["inviteCode"]);
+        return new Group($groupData["groupID"],$groupData["name"], $groupData["createdAt"], $groupData["inviteCode"], $this->resolveMemberID($groupData["ownerMemberID"]));
     }
 
     public function getUserGroups(User $user): array {
@@ -72,7 +119,7 @@ class GroupRepository extends Repository {
 
         if(sizeof($groups) > 0) {
             foreach($groups as $groupData) {
-                array_push($result,new Group($groupData["groupID"],$groupData["name"], $groupData["createdAt"], $groupData["inviteCode"]));
+                array_push($result,new Group($groupData["groupID"],$groupData["name"], $groupData["createdAt"], $groupData["inviteCode"], $this->resolveMemberID($groupData["ownerMemberID"])));
             }
         }
 
@@ -94,7 +141,7 @@ class GroupRepository extends Repository {
 
         if(sizeof($groups) > 0) {
             foreach($groups as $groupData) {
-                array_push($result,new Group($groupData["groupID"],$groupData["name"], $groupData["createdAt"], $groupData["inviteCode"]));
+                array_push($result,new Group($groupData["groupID"],$groupData["name"], $groupData["createdAt"], $groupData["inviteCode"], $userID));
             }
         }
 
@@ -119,7 +166,9 @@ class GroupRepository extends Repository {
         $conn = $this->database->connect();
 
         $query = $conn->prepare("SELECT * FROM users NATURAL JOIN group_members WHERE \"groupID\"=:id");
-        $query->bindParam(":id",$group->getID(), PDO::PARAM_INT);
+        $groupID = $group->getID();
+
+        $query->bindParam(":id",$groupID, PDO::PARAM_INT);
         $query->execute();
 
         $users = $query->fetchAll();
@@ -134,7 +183,7 @@ class GroupRepository extends Repository {
     }
 
     public function isGroupMember(User $user, Group $group): bool {
-        $memberID = $this->getMemberID($user, $group);
+        $memberID = $this->getMemberID($user->getID(), $group);
         return $memberID !== null;
     }
 
@@ -149,19 +198,15 @@ class GroupRepository extends Repository {
         ]);
     }
 
-    public function makeMemberGroupOwner(Group $group, User $user) {
+    public function removeGroupMember(Group $group, User $user) {
         $conn = $this->database->connect();
 
-        $memberID = $this->getMemberID($user, $group);
+        $query = $conn->prepare("DELETE FROM group_members WHERE \"groupID\"=:group AND \"userID\"=:user;");
         $groupID = $group->getID();
+        $userID = $user->getID();
 
-        if($memberID == null) {
-            throw new Exception("User not a member of the group.");
-        }
-
-        $query = $conn->prepare("UPDATE groups SET \"ownerMemberID\"=:user WHERE \"groupID\"=:group;");
-        $query->bindParam(":user", $memberID, PDO::PARAM_INT);
-        $query->bindParam(":group", $groupID, PDO::PARAM_INT);
+        $query->bindParam(":group",$groupID, PDO::PARAM_INT);
+        $query->bindParam(":user",$userID, PDO::PARAM_INT);
 
         $query->execute();
     }
