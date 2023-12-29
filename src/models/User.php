@@ -6,14 +6,16 @@ class User {
     private string $passwordHash;
     private string $name;
     private string $createdAt;
+    private int|null $activeGroupID;
 
 
-    public function __construct(int $userID, string $email, string $password, string $name, string $createdAt) {
+    public function __construct(int $userID, string $email, string $password, string $name, string $createdAt, int|null $activeGroupID) {
         $this->userID = $userID;
         $this->email = $email;
         $this->passwordHash = $password;
         $this->name = $name;
         $this->createdAt= $createdAt;
+        $this->activeGroupID = $activeGroupID;
     }
 
     public function getID() {
@@ -45,6 +47,14 @@ class User {
 
     public function getCreatedAt() {
         return $this->createdAt;
+    }
+
+    public function getActiveGroupID() {
+        return $this->activeGroupID;
+    }
+
+    public function setActiveGroupID(int $activeGroupID) {
+        $this->activeGroupID = $activeGroupID;
     }
 }
 

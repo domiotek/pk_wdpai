@@ -64,6 +64,16 @@ section form button {
     left: calc(100% + 10px);
 }
 
+.ErrorBox {
+    font-size: 0.75em;
+    margin: 0;
+    padding: 0.5em;
+    background: var(--third-light-1-color);
+    border: solid 1px var(--third-color);
+    border-radius: 0.5em;
+    margin-bottom: 1em;
+}
+
 
 @media screen and (min-width: 376px) {
     section {

@@ -1,5 +1,7 @@
 <?php
 
+require_once __DIR__ . "/../models/User.php";
+
 class AppController {
 
     private $request;
@@ -41,6 +43,25 @@ class AppController {
         }
 
         return false; 
+    }
+
+    protected function getSignedInUserID(): ?User {
+        if(!isset($_COOKIE["session"])) {
+            return null;
+        }
+
+        $token = $_COOKIE["session"];
+
+        $sessions = new SessionRepository();
+        $session = $sessions->getSession($token);
+
+        if($session) {
+            if($session->isValid()) {
+                return $session->getUser();
+            }
+        }
+
+        return null; 
     }
 
     protected function redirect(string $url): void {

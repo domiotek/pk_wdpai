@@ -18,7 +18,7 @@ class SessionRepository extends Repository {
             return null;
         }
 
-        $user = new User($result["userID"], $result["email"], $result["password"], $result["name"], $result["createdAt"]);
+        $user = new User($result["userID"], $result["email"], $result["password"], $result["name"], $result["createdAt"], $result["activeGroupID"]);
 
         return new Session($token, $user, $result["validUntil"]);
     }

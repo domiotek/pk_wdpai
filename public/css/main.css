@@ -134,6 +134,10 @@ main {
   margin: 0.75em 0 0;
 }
 
+#AccountPopup >h4 >a {
+  font-size: 0.75em;
+}
+
 #AccountPopup >a {
   float: right;
   margin-top: 0.5em;
@@ -167,6 +171,12 @@ main {
 
 #AccountPopup .GroupsHolder a.active i {
   display: inline;
+}
+
+#AccountPopup .NoGroupsMessage {
+  font-size: 0.75rem;
+  text-align: center;
+  margin-top: 1.75em;
 }
 
 @media screen and (min-width: 1441px) {

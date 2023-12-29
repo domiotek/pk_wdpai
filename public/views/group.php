@@ -16,7 +16,7 @@
 </head>
 <body>
     <header>
-        <a href="/dashboard">
+        <a href="/home">
             <img src="/public/img/logo.png" alt="Logo">
         </a>
         <button type="button" id="HeaderUserButton" title="User">
@@ -29,7 +29,7 @@
                 <i class="fa-solid fa-list"></i>
                 <span>Tasks & notes</span>
             </a>
-            <a href="/dashboard">
+            <a href="/home">
                 <i class="fa-solid fa-house"></i>
                 <span>Dashboard</span>
             </a>
@@ -87,16 +87,21 @@
             <span>Damian</span>
         </div>
         
-        <h4>Your groups</h4>
+        <h4>Your groups <a href="/new">Add new</a></h4>
         <div class="GroupsHolder">
-            <a href="#" class="active">
-                Test group 1
-                <i class="fas fa-check"></i>
-            </a>
-            <a href="#">
-                Test group 2
-                <i class="fas fa-check"></i>
-            </a>
+            <?php 
+                if(isset($userGroups)&&isset($activeGroupID)&&sizeof($userGroups) > 0){
+
+                    foreach($userGroups as $group) {
+                        $name = $group->getName();
+                        $ID = $group->getID();
+                        echo "<a href='/switchToGroup?target=$ID' class='" . ($group->getID()==$activeGroupID?"active":"")  . "'>
+                                $name
+                                <i class='fas fa-check'></i>
+                            </a>";
+                    }
+                }else echo "<p class='NoGroupsMessage'>You don't belong to any group yet.";
+            ?>
         </div>
         <a href="/logout">Logout </a>
     </div>

@@ -24,7 +24,26 @@ class UserRepository extends Repository {
             return null;
         }
 
-        return new User($user["userID"],$user["email"], $user["password"], $user["name"], $user["createdAt"]);
+        return new User($user["userID"],$user["email"], $user["password"], $user["name"], $user["createdAt"], $user["activeGroupID"]);
+    }
+
+    public function updateUser(User $user): void {
+        $conn = $this->database->connect();
+
+        $query = $conn->prepare("UPDATE users SET email=:email, password=:passwd, name=:name, \"activeGroupID\"=:group WHERE \"userID\"=:id;");
+
+        $ID = $user->getID();
+        $email = $user->getEmail();
+        $passwd = $user->getPasswordHash();
+        $name = $user->getName();
+        $group = $user->getActiveGroupID();
+
+        $query->bindParam(":email",$email, PDO::PARAM_STR);
+        $query->bindParam(":passwd",$passwd, PDO::PARAM_STR);
+        $query->bindParam(":name",$name, PDO::PARAM_STR);
+        $query->bindParam(":group",$group, PDO::PARAM_INT);
+        $query->bindParam(":id",$ID, PDO::PARAM_INT);
+        $query->execute();
     }
 
 }

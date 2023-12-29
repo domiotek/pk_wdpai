@@ -39,7 +39,7 @@ class SecurityController extends AppController {
     public function login() {
 
         if($this->isAuthenticated()) {
-            $this->redirect("dashboard");
+            $this->redirect("home");
         }
 
         if(!$this->isPOST()) {
@@ -85,7 +85,7 @@ class SecurityController extends AppController {
 
         setcookie("session",$session->getToken(), $expirationDate);
 
-        $this->redirect("dashboard");
+        $this->redirect("home");
     }
 
     public function logout() {
