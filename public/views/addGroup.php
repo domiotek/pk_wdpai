@@ -25,7 +25,7 @@
         </button>
     </header>
     <main>
-        <h2 class="title">Hello Damian</h2>
+        <h2 class="title">Hello <?php echo $signedInUser->getName()?></h2>
         <h5 class="subtitle">
             <?php 
                 if(isset($subtitle)) {
@@ -75,12 +75,12 @@
         <h4>Your groups <a href="/new">Add new</a></h4>
         <div class="GroupsHolder">
             <?php 
-                if(isset($userGroups)&&isset($activeGroupID)&&sizeof($userGroups) > 0){
+                if(isset($userGroups)&&sizeof($userGroups) > 0){
 
                     foreach($userGroups as $_group) {
                         $name = $_group->getName();
                         $ID = $_group->getID();
-                        echo "<a href='/switchToGroup?target=$ID' class='" . ($_group->getID()==$activeGroupID?"active":"")  . "'>
+                        echo "<a href='/switchToGroup?target=$ID' class='" . ($_group->getID()==$signedInUser->getActiveGroupID()?"active":"")  . "'>
                                 $name
                                 <i class='fas fa-check'></i>
                             </a>";

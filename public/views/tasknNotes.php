@@ -112,18 +112,18 @@
     <div id="AccountPopup">
         <div class="PopupHeader">
             <i class="far fa-user"> </i>
-            <span>Damian</span>
+            <span><?php echo $signedInUser->getName()?></span>
         </div>
         
         <h4>Your groups <a href="/new">Add new</a></h4>
         <div class="GroupsHolder">
             <?php 
-                if(isset($userGroups)&&isset($activeGroupID)&&sizeof($userGroups) > 0){
+                if(isset($userGroups)&&sizeof($userGroups) > 0){
 
                     foreach($userGroups as $_group) {
                         $name = $_group->getName();
                         $ID = $_group->getID();
-                        echo "<a href='/switchToGroup?target=$ID' class='" . ($_group->getID()==$activeGroupID?"active":"")  . "'>
+                        echo "<a href='/switchToGroup?target=$ID' class='" . ($_group->getID()==$signedInUser->getActiveGroupID()?"active":"")  . "'>
                                 $name
                                 <i class='fas fa-check'></i>
                             </a>";

@@ -14,9 +14,9 @@ class DefaultController extends AppController {
             $groups = $groupsRep->getUserGroups($user);
 
             if(sizeof($groups) > 0) {
-                $this->render("dashboard", ["userGroups"=>$groups, "activeGroupID"=>$user->getActiveGroupID()]);
+                $this->render("dashboard", ["userGroups"=>$groups, "signedInUser"=>$user]);
             } else {
-                $this->render("addGroup",["subtitle"=>"You don't belong to any group yet.", "userGroups"=>[]]);
+                $this->render("addGroup",["subtitle"=>"You don't belong to any group yet.", "userGroups"=>[], "signedInUser"=>$user]);
             }
         }else {
             $this->redirect("login?r=session_expired");
@@ -43,7 +43,7 @@ class DefaultController extends AppController {
                 }
             }
 
-            $this->render("addGroup", ["subtitle"=>"Want to explore something new?", "userGroups"=>$groups, "activeGroupID"=>$user->getActiveGroupID(), $type=>$message!==false?$message:null]);
+            $this->render("addGroup", ["subtitle"=>"Want to explore something new?", "userGroups"=>$groups, "signedInUser"=>$user, $type=>$message!==false?$message:null]);
         }else {
             $this->redirect("login?r=session_expired");
         }
@@ -57,7 +57,7 @@ class DefaultController extends AppController {
 
             $groups = $groupsRep->getUserGroups($user);
 
-            $this->render("tasknNotes", ["userGroups"=>$groups, "activeGroupID"=>$user->getActiveGroupID()]);
+            $this->render("tasknNotes", ["userGroups"=>$groups, "signedInUser"=>$user]);
         }else {
             $this->redirect("login?r=session_expired");
         }
