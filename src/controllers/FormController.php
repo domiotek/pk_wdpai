@@ -135,7 +135,6 @@ class FormController extends AppController {
         $targetGroup = $groupRepository->getGroup($initiator->getActiveGroupID());
 
         $err = true;
-        $errMessage = "";
         $errCode = "";
         switch(true) {
             case $targetGroup==null: $errCode = "noGroup"; break;
@@ -147,7 +146,7 @@ class FormController extends AppController {
         }
 
         if($err) {
-            $this->redirect("gropu?r=$errCode");
+            $this->redirect("group?r=$errCode");
         }
 
         $groupRepository->removeGroupMember($targetGroup, $targetUser);
