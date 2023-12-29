@@ -12,6 +12,8 @@
     <link rel="stylesheet" href="/public//css//entity-panels.css">
     <link rel="stylesheet" href="/public/css/task-n-notes.css">
 
+    <script src="/public/js/main.js" defer></script>
+
     <script src="https://kit.fontawesome.com/00b5fcc6a2.js" crossorigin="anonymous"></script>
 </head>
 <body>
@@ -106,5 +108,24 @@
             </button>
         </section>
     </main>
+    <div id="AccountPopup">
+        <div class="PopupHeader">
+            <i class="far fa-user"> </i>
+            <span>Damian</span>
+        </div>
+        
+        <h4>Your groups</h4>
+        <div class="GroupsHolder">
+            <a href="#" class="active">
+                Test group 1
+                <i class="fas fa-check"></i>
+            </a>
+            <a href="#">
+                Test group 2
+                <i class="fas fa-check"></i>
+            </a>
+        </div>
+        <a href="/logout">Logout </a>
+    </div>
 </body>
 </html>

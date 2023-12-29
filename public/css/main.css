@@ -7,6 +7,7 @@ body {
     sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  position: relative;
 }
 
 :root, body {
@@ -96,4 +97,80 @@ header {
 
 main {
     padding: 2rem 1rem 2rem;
+}
+
+#AccountPopup {
+  display: none;
+  position: fixed;
+  top: 60px;
+  background: var(--bg-1);
+  right: 10px;
+  width: 250px;
+  padding: 1em 0.5em;
+  box-shadow: 0px 2px 10px 0 #95959573;
+  border-radius: 0.5em;
+}
+
+#AccountPopup.shown {
+  display: block;
+}
+
+#AccountPopup .PopupHeader {
+  display: flex;
+}
+
+#AccountPopup .PopupHeader .fa-user {
+  font-size: 1.7em;
+  margin: 0 0.5em;
+}
+
+#AccountPopup .PopupHeader span {
+  font-size: 1.2em;
+  font-weight: 500;
+  margin-left: 0.5em;
+}
+
+#AccountPopup >h4 {
+  margin: 0.75em 0 0;
+}
+
+#AccountPopup >a {
+  float: right;
+  margin-top: 0.5em;
+}
+
+#AccountPopup .GroupsHolder {
+  display: flex;
+  flex-direction: column;
+  height: 100px;
+  overflow-y: auto;
+  background: inherit;
+  margin-top: 0.75em;
+}
+
+#AccountPopup .GroupsHolder a {
+  padding: 0.75em 0.5em;
+  color: var(--brighter-font-color);
+  background: inherit;
+  transition: background 0.4s;
+}
+
+#AccountPopup .GroupsHolder a:hover {
+  background: var(--primary-light-2-color);
+}
+
+#AccountPopup .GroupsHolder i {
+  float: right;
+  display: none;
+  color: var(--secondary-color);
+}
+
+#AccountPopup .GroupsHolder a.active i {
+  display: inline;
+}
+
+@media screen and (min-width: 1441px) {
+  #AccountPopup {
+    position: absolute;
+  }
 }
