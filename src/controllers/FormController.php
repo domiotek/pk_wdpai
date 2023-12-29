@@ -208,4 +208,62 @@ class FormController extends AppController {
 
         $this->redirect("group");
     }
+
+    public function regenInvite() {
+        if(!$this->isAuthenticated()) {
+            $this->redirect("home");
+        }
+
+        $user = $this->getSignedInUserID();
+        $groupRepository = new GroupRepository();
+
+
+        $targetGroup = $groupRepository->getGroup($user->getActiveGroupID());
+
+        $err = true;
+        $errCode = "";
+        switch(true) {
+            case $targetGroup==null: $errCode = "noGroup"; break;
+            case $targetGroup->getOwnerUserID()!=$user->getID(): $errCode = "notOwner"; break;
+            default: $err=false;
+        }
+
+        if($err) {
+            $this->redirect("group?r=$errCode");
+        }
+
+        $targetGroup->setInvitationCode(bin2hex(random_bytes(3)));
+        $groupRepository->updateGroup($targetGroup);
+
+        $this->redirect("group");
+    }
+
+    public function invite() {
+        if(!$this->isAuthenticated() || !isset($_REQUEST["code"])) {
+            $this->redirect("new");
+        }
+
+        $code = $_REQUEST["code"];
+        $user = $this->getSignedInUserID();
+        $groupRepository = new GroupRepository();
+        $userRepository = new UserRepository();
+
+        $group = $groupRepository->getGroupByInvite($code);
+
+        if($group==null || $groupRepository->isGroupMember($user, $group)) {
+            $errCode = $group==null?"jInvCode":"jAlrMemb";
+
+            $this->redirect("new?r=$errCode");
+            return;
+            
+        }
+
+        $groupRepository->addGroupMember($group, $user);
+        if($user->getActiveGroupID()==null) {
+            $user->setActiveGroupID($group->getID());
+            $userRepository->updateUser($user);
+        }
+        $this->redirect("home");
+
+    }
 }

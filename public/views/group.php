@@ -13,6 +13,7 @@
 
     <script src="/public/js/stripURL.js"></script>
     <script src="/public/js/main.js" defer></script>
+    <script src="/public/js/group.js" defer></script>
 
     <script src="https://kit.fontawesome.com/00b5fcc6a2.js" crossorigin="anonymous"></script>
 </head>
@@ -99,10 +100,14 @@
                 <h4>Want to add more people?</h4>
                 <h6>Just send them this link</h6>
                 <div class="InviteLinkHolder">
-                    <h6>https://taskmate.com/invite?code=gG2vc</h6>
-                    <button><i class="fa-regular fa-copy"></i></button>
+                    <h6>http://<?php echo $_SERVER['HTTP_HOST'] ?>/invite?code=<?php echo $group->getInvitationCode()?></h6>
+                    <button id="InviteCopyButton"><i class="fa-regular fa-copy"></i></button>
                 </div>
-                <h6 class="RegenerateCodePrompt">Want new one? <a href="#">Regenerate</a></h6>
+                <?php 
+                    if($signedInUser->getID()==$ownerUserID)
+                        echo "<h6 class='RegenerateCodePrompt'>Want new one? <a href='/regenInvite'>Regenerate</a></h6>";
+                ?>
+                
             </section>
         </section>
     </main>

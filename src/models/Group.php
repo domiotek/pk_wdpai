@@ -34,6 +34,10 @@ class Group {
     public function getInvitationCode(): string {
         return $this->invitationCode;
     }
+    
+    public function setInvitationCode(string $newInvitationCode) {
+        $this->invitationCode = $newInvitationCode;
+    }
 
     public function getOwnerUserID(): int {
         return $this->ownerUserID;

@@ -21,5 +21,7 @@ Router::get("switchToGroup","FormController");
 Router::get("changeGroupName", "FormController");
 Router::get("kickMember","FormController");
 Router::get("leaveGroup","FormController");
+Router::get("regenInvite", "FormController");
+Router::get("invite","FormController");
 
 Router::run($path);
