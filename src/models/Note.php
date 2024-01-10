@@ -9,43 +9,44 @@ class Note {
     private string $content;
 
 
-    public __construct(int $noteID, int $objectID, int $creatorUserID, DateTime $createdAt, string $title, string $content) {
+    public function __construct(int $noteID, int $objectID, int $creatorUserID, DateTime $createdAt, string $title, string $content) {
         $this->noteID = $noteID;
         $this->objectID = $objectID;
         $this->creatorUserID = $creatorUserID;
         $this->createdAt = $createdAt;
         $this->title = $title;
+        $this->content = $content;
     }
 
-    public getNoteID() {
+    public function getNoteID() {
         return $this->noteID;
     }
 
-    public getObjectID() {
+    public function getObjectID() {
         return $this->objectID;
     }
 
-    public getCreatorUserID() {
+    public function getCreatorUserID() {
         return $this->creatorUserID;
     }
 
-    public getCreatedAt() {
+    public function getCreatedAt() {
         return $this->createdAt;
     }
 
-    public getTitle() {
+    public function getTitle() {
         return $this->title;
     }
 
-    public setTitle(string $newTitle) {
+    public function setTitle(string $newTitle) {
         $this->title = $newTitle;
     }
 
-    public getContent() {
+    public function getContent() {
         return $this->content;
     }
 
-    public setContent(string $newContent) {
+    public function setContent(string $newContent) {
         $this->content = $newContent;
     }
 }

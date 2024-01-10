@@ -1,69 +1,72 @@
 <?php
 
-class Note {
-    private int $noteID;
+class Task {
+    private int $taskID;
     private int $objectID;
     private int $creatorUserID;
     private DateTime $createdAt;
     private string $title;
     private bool $isCompleted;
-    private int $assignedUserID;
-    private DateTime $dueDate;
+    private int|null $assignedUserID;
+    private DateTime|null $dueDate;
 
 
-    public __construct(int $noteID, int $objectID, int $creatorUserID, DateTime $createdAt, string $title, bool $isCompleted, int $assignedUserID, DateTime $dueDate) {
-        $this->noteID = $noteID;
+    public function __construct(int $taskID, int $objectID, int $creatorUserID, DateTime $createdAt, string $title, bool $isCompleted, int|null $assignedUserID, DateTime|null $dueDate) {
+        $this->taskID = $taskID;
         $this->objectID = $objectID;
         $this->creatorUserID = $creatorUserID;
         $this->createdAt = $createdAt;
         $this->title = $title;
+        $this->isCompleted = $isCompleted;
+        $this->assignedUserID = $assignedUserID;
+        $this->dueDate = $dueDate;
     }
 
-    public getNoteID() {
-        return $this->noteID;
+    public function getTaskID() {
+        return $this->taskID;
     }
 
-    public getObjectID() {
+    public function getObjectID() {
         return $this->objectID;
     }
 
-    public getCreatorUserID() {
+    public function getCreatorUserID() {
         return $this->creatorUserID;
     }
 
-    public getCreatedAt() {
+    public function getCreatedAt() {
         return $this->createdAt;
     }
 
-    public getTitle() {
+    public function getTitle() {
         return $this->title;
     }
 
-    public setTitle(string $newTitle) {
+    public function setTitle(string $newTitle) {
         $this->title = $newTitle;
     }
 
-    public getIsCompleted() {
+    public function getIsCompleted() {
         return $this->isCompleted;
     }
 
-    public setIsCompleted(bool $isCompleted) {
+    public function setIsCompleted(bool $isCompleted) {
         $this->isCompleted = $isCompleted;
     }
 
-    public getAssignedUserID() {
+    public function getAssignedUserID() {
         return $this->assignedUserID;
     }
 
-    public setAssignedUserID(int $newUserID) {
+    public function setAssignedUserID(int $newUserID) {
         $this->assignedUserID = $newUserID;
     }
 
-    public getDueDate() {
+    public function getDueDate() {
         return $this->dueDate;
     }
 
-    public setDueDate(DateTime $newDueDate) {
+    public function setDueDate(DateTime $newDueDate) {
         $this->dueDate = $newDueDate;
     }
 }

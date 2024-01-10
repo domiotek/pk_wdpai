@@ -24,8 +24,15 @@
     border-radius: 50%;
     z-index: 1;
     left: 0;
-    /* left: calc(100% - 30px); */
-    transition: left 0.5s;
+    transition: left 0.3s;
+}
+
+.TargetListSwitcher span.Show-tasks {
+    left: 0;
+}
+
+.TargetListSwitcher span.Show-notes{
+    left: calc(100% - 30px);
 }
 
 .ListWrapper {

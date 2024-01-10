@@ -87,47 +87,64 @@
                 <section class="EntityList">
                     <h3>
                         Tasks
-                        <a href="#">See all</a>
+                        <a href="/d?t=t" style="display: <?php echo isset($tasks)&&sizeof($tasks) > 0?"inline":"none" ?>">See all</a>
                     </h3>
-                    <ul>
-                        <li class="EntityPanel Task">
-                            <label class="checkbox">
-                                <input type="checkbox">
-                                <span class="checkmark"></span>
-                            </label>
-                            <div class="TaskBody">
-                                <h3>Do groceries</h3>
-                                <h6>Not assigned <span class="fa-solid fa-circle"></span> 1 hour ago</h6>
-                            </div>
-                        </li>
-                        <li class="EntityPanel Task">
-                            <label class="checkbox">
-                                <input type="checkbox" checked="checked">
-                                <span class="checkmark"></span>
-                            </label>
-                            <div class="TaskBody">
-                                <h3>Trash duty</h3>
-                                <h6>Andrew <span class="fa-solid fa-circle"></span> 2 hours ago</h6>
-                            </div>
-                        </li>
-                    </ul>
+                    <?php
+                        if(isset($tasks)&&sizeof($tasks) > 0) {
+                                echo "<ul>";
+                                foreach ($tasks as $task) {
+
+                                    echo "
+                                    <li class='EntityPanel Task'>
+                                        <label class='checkbox'>
+                                            <input type='checkbox' " . ($task["checkState"]?"checked='1'":"") . ">
+                                            <span class='checkmark'></span>
+                                        </label>
+                                        <div class='TaskBody'>
+                                            <h3>" . $task["title"] ."</h3>
+                                            <h6>" . (is_null($task["assignedUser"])?"Not assigned":"Assigned to " . $task["assignedUser"]) . 
+                                                " <span class='fa-solid fa-circle'></span> " 
+                                                . $task["relTime"] 
+                                                . (is_null($task["dueDate"])?"":" <span class='fa-solid fa-circle'></span> Due " . $task["dueDate"]) .
+                                            "</h6>
+                                        </div>
+                                    </li>";
+                                }
+                                echo "</ul>";
+                        }else {
+                            echo "<div class='NoPanelsNotice'>
+                                <h5>No tasks defined yet</h5>
+                            </div>";
+                        }
+                    ?>
                 </section>
                 <section class="EntityList">
                     <h3>
                         Notes
-                        <a href="#">See all</a>
+                        <a href="/d?t=n" style="display: <?php echo isset($notes)&&sizeof($notes) > 0?"inline":"none" ?>">See all</a>
                     </h3>
-                    <ul>
-                        <li class="EntityPanel Note">
-                            <div class="NoteHeader">
-                                <h3>Grocery list</h3>
-                                <h6>10 minutes ago</h6>
-                            </div>
-                            <div class="NoteContent">
-                                <textarea readonly title="Note">Milk&#13;&#10;Butter&#13;&#10;Bread</textarea>
-                            </div>
-                        </li>
-                    </ul>
+                    <?php 
+                        if(isset($notes)&&sizeof($notes) > 0) {
+                            echo "<ul>";
+                            foreach ($notes as $note) {
+                                echo "
+                                <li class='EntityPanel Note'>
+                                    <div class='NoteHeader'>
+                                        <h3>" . $note["title"] . "</h3>
+                                        <h6>" . $note["relTime"] . "</h6>
+                                    </div>
+                                    <div class='NoteContent'>
+                                        <textarea readonly title='Note'>" . $note["content"] . "</textarea>
+                                    </div>
+                                </li>";
+                            }
+                            echo "</ul>";
+                        }else {
+                            echo "<div class='NoPanelsNotice'>
+                                <h5>No notes defined yet</h5>
+                            </div>";
+                        }
+                    ?>
                 </section>
             </section>
         </section>

@@ -4,6 +4,10 @@
     width: 100%;
 }
 
+.EntityList.Shown {
+    display: block;
+}
+
 .EntityList h3 a {
     font-size: 0.6rem;
 }
@@ -16,7 +20,7 @@
 .EntityPanel {
     display: flex;
     background: var(--third-light-2-color);
-    height: 60px;
+    height: 65px;
     align-items: flex-start;
     padding: 0.5rem;
     margin: 0.5rem;
@@ -99,6 +103,12 @@
     width: 100%;
     height: 100%;
     resize: none;
+}
+
+.NoPanelsNotice h5 {
+    text-align: center;
+    font-weight: 500;
+    color: var(--brighter-font-color);
 }
 
 @media screen and (min-width: 426px) {
