@@ -266,4 +266,217 @@ class FormController extends AppController {
         $this->redirect("home");
 
     }
+
+    public function createTask() {
+        if(!$this->isAuthenticated() || !isset($_POST["title"]) | !isset($_POST["assignedUser"]) | !isset($_POST["dueDate"])) {
+            $this->redirect("d?t=t");
+        }
+
+        $title = $_POST["title"];
+        $assign = $_POST["assignedUser"];
+        $dueDate = $_POST["dueDate"];
+        $user = $this->getSignedInUserID();
+        $userRep = new UserRepository();
+        $groupRep = new GroupRepository();
+        $currGroup = $groupRep->getGroup($user->getActiveGroupID());
+
+        $titleLen = strlen($title);
+
+        if($titleLen == 0 || $titleLen > 50) {
+            $this->redirect("/d?t=t&m=c&r=invTitle");
+        }
+
+        $readyAssingedUser = null;
+
+        if($assign!="") {
+            $readyAssingedUser = $userRep->getUser(intval($assign));
+            if(!$readyAssingedUser) {
+                $this->redirect("/d?t=t&m=c&r=noUser");
+            }
+
+            if(!$groupRep->isGroupMember($readyAssingedUser,$currGroup)) {
+                $this->redirect("/d?t=t&m=c&r=notMember");
+            }
+        }
+
+        if($dueDate!="") {
+            $date = new DateTime($dueDate);
+
+            if($date < new DateTime("now")) {
+                $this->redirect("/d?t=t&m=c&r=pastDate");
+            }
+
+            $dueDate = $date;
+        }else $dueDate = null;
+
+        $taskRep = new TaskRepository();
+
+        $taskRep->createTask($title, $currGroup, $user, $readyAssingedUser, $dueDate);
+
+        $this->redirect("d?t=t");
+    }
+    
+    public function createNote() {
+        if(!$this->isAuthenticated() || !isset($_POST["title"]) | !isset($_POST["content"])) {
+            $this->redirect("d?t=n");
+        }
+
+        $title = $_POST["title"];
+        $content = $_POST["content"];
+        $user = $this->getSignedInUserID();
+        $groupRep = new GroupRepository();
+        $currGroup = $groupRep->getGroup($user->getActiveGroupID());
+
+        $titleLen = strlen($title);
+
+        if($titleLen == 0 || $titleLen > 50) {
+            $this->redirect("/d?t=n&m=c&r=invTitle");
+        }
+
+        $contentLen = strlen($content);
+
+        if($contentLen == 0 || $contentLen > 255) {
+            $this->redirect("/d?t=n&m=c&r=intContent");
+        }
+
+        $noteRep = new NoteRepository();
+
+        $noteRep->createNote($title, $currGroup, $user, $content);
+
+        $this->redirect("d?t=n");
+    }
+
+    public function editTask() {
+        if(!$this->isAuthenticated() || !isset($_POST["id"]) || !isset($_POST["title"]) || !isset($_POST["assignedUser"]) || !isset($_POST["dueDate"])) {
+            $this->redirect("d?t=t");
+        }
+
+        $ID = $_POST["id"];
+        $title = $_POST["title"];
+        $assign = $_POST["assignedUser"];
+        $dueDate = $_POST["dueDate"];
+        $user = $this->getSignedInUserID();
+        $userRep = new UserRepository();
+        $groupRep = new GroupRepository();
+        $taskRep = new TaskRepository();
+        $currGroup = $groupRep->getGroup($user->getActiveGroupID());
+
+        $task = $taskRep->getTask($ID);
+
+        if($task===null) {
+            $this->redirect("/d?t=t&m=e&r=NoEntity");
+        }
+
+        $titleLen = strlen($title);
+
+        if($titleLen == 0 || $titleLen > 50) {
+            $this->redirect("/d?t=t&m=e&r=invTitle");
+        }
+
+        $task->setTitle($title);
+
+        $readyAssingedUser = null;
+
+        if($assign!="") {
+            $readyAssingedUser = $userRep->getUser(intval($assign));
+            if(!$readyAssingedUser) {
+                $this->redirect("/d?t=t&m=e&r=noUser");
+            }
+
+            if(!$groupRep->isGroupMember($readyAssingedUser,$currGroup)) {
+                $this->redirect("/d?t=t&m=e&r=notMember");
+            }
+
+            $readyAssingedUser = $readyAssingedUser->getID();
+        }
+
+        $task->setAssignedUserID($readyAssingedUser);
+
+        if($dueDate!="") {
+            $date = new DateTime($dueDate);
+
+            if($date < new DateTime("now")) {
+                $this->redirect("/d?t=t&m=e&r=pastDate");
+            }
+
+            $dueDate = $date;
+        }else $dueDate = null;
+
+        $task->setDueDate($dueDate);
+
+        $taskRep = new TaskRepository();
+
+        $taskRep->updateTask($task);
+
+        $this->redirect("d?t=t");
+    }
+
+    public function editNote() {
+        if(!$this->isAuthenticated() || !isset($_POST["id"]) || !isset($_POST["title"]) || !isset($_POST["content"])) {
+            $this->redirect("d?t=n");
+        }
+
+        $ID = $_POST["id"];
+        $title = $_POST["title"];
+        $content = $_POST["content"];
+        $noteRep = new NoteRepository();
+
+        $note = $noteRep->getNote($ID);
+
+        if($note===null) {
+            $this->redirect("/d?t=n&m=e&r=NoEntity");
+        }
+
+        $titleLen = strlen($title);
+
+        if($titleLen == 0 || $titleLen > 50) {
+            $this->redirect("/d?t=t&m=e&r=invTitle");
+        }
+
+        $note->setTitle($title);
+
+        $contentLen = strlen($content);
+
+        if($contentLen == 0 || $contentLen > 255) {
+            $this->redirect("/d?t=n&m=e&r=intContent");
+        }
+
+        $note->setContent($content);
+
+        $noteRep->updateNote($note);
+
+        $this->redirect("d?t=n");
+    }
+
+    public function deleteTask() {
+        if(!$this->isAuthenticated() || !isset($_POST["id"])) {
+            $this->redirect("d?t=t");
+        }
+
+        $taskRep = new TaskRepository();
+
+        $task = $taskRep->getTask($_POST["id"]);
+
+        if($task) {
+            $taskRep->deleteTask($task);
+        };
+
+        $this->redirect("d?t=t");
+    }
+
+    public function deleteNote() {
+        if(!$this->isAuthenticated() || !isset($_POST["id"])) {
+            $this->redirect("d?t=n");
+        }
+
+        $noteRep = new NoteRepository();
+
+        $note = $noteRep->getNote($_POST["id"]);
+
+        if($note) {
+            $noteRep->deleteNote($note);
+        };
+
+        $this->redirect("d?t=n");
+    }
 }

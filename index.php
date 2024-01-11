@@ -23,5 +23,11 @@ Router::get("kickMember","FormController");
 Router::get("leaveGroup","FormController");
 Router::get("regenInvite", "FormController");
 Router::get("invite","FormController");
+Router::post("createTask", "FormController");
+Router::post("createNote", "FormController");
+Router::post("editTask", "FormController");
+Router::post("editNote", "FormController");
+Router::post("deleteTask", "FormController");
+Router::post("deleteNote", "FormController");
 
 Router::run($path);

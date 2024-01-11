@@ -3,3 +3,4 @@ document.querySelectorAll(".TargetListSwitcher > img")?.forEach(elem=>elem.addEv
     document.querySelector(`.EntityList[data-list=${e.target.dataset.list}]`).classList.add("Shown");
     document.querySelector(".TargetListSwitcher span").setAttribute("class", `Show-${e.target.dataset.list}`);
 }));
+

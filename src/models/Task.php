@@ -58,7 +58,7 @@ class Task {
         return $this->assignedUserID;
     }
 
-    public function setAssignedUserID(int $newUserID) {
+    public function setAssignedUserID(int|null $newUserID) {
         $this->assignedUserID = $newUserID;
     }
 
@@ -66,7 +66,7 @@ class Task {
         return $this->dueDate;
     }
 
-    public function setDueDate(DateTime $newDueDate) {
+    public function setDueDate(DateTime|null $newDueDate) {
         $this->dueDate = $newDueDate;
     }
 }

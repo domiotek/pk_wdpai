@@ -20,7 +20,7 @@
 .EntityPanel {
     display: flex;
     background: var(--third-light-2-color);
-    height: 65px;
+    min-height: 65px;
     align-items: flex-start;
     padding: 0.5rem;
     margin: 0.5rem;
@@ -32,10 +32,15 @@
     flex-direction: column;
     height: 100%;
     justify-content: space-between;
+    overflow: hidden;
 }
 
 .TaskBody h3 {
     margin: 0;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    cursor: pointer;
 }
 
 .TaskBody h6 {
@@ -71,21 +76,29 @@
 }
 
 .EntityPanel.Note {
-    height: 100px;
+    min-height: 100px;
     flex-direction: column;
 }
 
 .NoteHeader {
     display: flex;
     align-items: baseline;
+    cursor: pointer;
+    width: 100%;
 }
 
 .NoteHeader h3 {
     margin: 0;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    width: 70%;
 }
 
 .NoteHeader h6 {
     margin: 0 0 0 0.5rem;
+    flex: 1;
+    text-align: right;
 }
 
 .NoteContent {
@@ -103,6 +116,8 @@
     width: 100%;
     height: 100%;
     resize: none;
+    box-shadow: none;
+    margin: 0;
 }
 
 .NoPanelsNotice h5 {
@@ -111,8 +126,109 @@
     color: var(--brighter-font-color);
 }
 
+.Modal {
+    position: fixed;
+    display: none;
+    top: 4rem;
+    left: 0;
+    height: calc(100% - 7.5rem);
+    width: 100%;
+    background: white;
+    align-items: center;
+    justify-content: center;
+    z-index: 8;
+}
+
+.Modal.Shown {
+    display: flex;
+}
+
+.ModalContainer {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    padding: 1em;
+}
+
+.CreateModalContent, .EditModalContent {
+    display: none;
+    width: 100%;
+    height: 100%;
+    flex-direction: column;
+}
+
+.CreateModalContent.Shown, .EditModalContent.Shown {
+    display: flex;
+}
+
+.ModalContainer form {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    padding: 0 2em;
+}
+
+.ModalContainer .ButtonsWrapper {
+    display: flex;
+    justify-content: flex-end;
+    margin-top: auto;
+    margin-right: -2em;
+}
+
+.ModalContainer .ButtonsWrapper button {
+    font-size: 0.8em;
+}
+
+.ModalContainer button[type=reset] {
+    background: none;
+    padding: 0;
+    margin-right: 1em;
+}
+
+.ModalContainer button[type=submit] {
+    border-radius: 3em;
+}
+
+.ModalContainer textarea {
+    height: 150px;
+    resize: none;
+}
+
+.EditModalContent {
+    overflow: auto;
+}
+
+.EditModalContent .EntityDetails h5 {
+    font-weight: 600;
+    margin: 0;
+}
+
+.EditModalContent .EntityDetails h5:first-of-type {
+    margin-bottom: 1em;
+}
+
+.EditModalContent .EntityDetails button {
+    background: #FC7272;
+}
+
 @media screen and (min-width: 426px) {
     .EntityList {
         width: 375px;
+    }
+
+    .Modal {
+        background: #65656566;
+        top: 0;
+        height: 100%;
+        z-index: 10; 
+    }
+
+    .ModalContainer {
+        height: 80%;
+        max-width: 450px;
+        max-height: 550px;
+        background: white;
+        border-radius: 0.5em;
+        box-shadow: 1px 1px 8px 0 #9090903d;
     }
 }

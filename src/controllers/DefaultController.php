@@ -37,7 +37,11 @@ class DefaultController extends AppController {
                 $taskStruct["checkState"] = $task->getIsCompleted();
                 $taskStruct["relTime"] = $relTime;
                 $taskStruct["assignedUser"] = $assignedUser;
-                $taskStruct["dueDate"] = is_null($task->getDueDate())?null:$task->getDueDate()->format("d/m/y H:i");
+                $taskStruct["assignedUserID"] = $task->getAssignedUserID();
+                $taskStruct["dueDate"] = is_null($task->getDueDate())?null:$task->getDueDate()->format("d/m/y");
+                $taskStruct["dueDateIso"] = is_null($task->getDueDate())?null:$task->getDueDate()->format("Y-m-d");
+                $taskStruct["createdAt"] = $task->getCreatedAt()->format("d/m/y H:i");
+                $taskStruct["creator"] = $userRep->getUser($task->getCreatorUserID())->getName();
 
                 array_push($tasksResult, $taskStruct);
             }
@@ -49,12 +53,19 @@ class DefaultController extends AppController {
                 $noteStruct["title"] = $note->getTitle();
                 $noteStruct["content"] = $note->getContent();
                 $noteStruct["relTime"] = $relTime;
+                $noteStruct["createdAt"] = $note->getCreatedAt()->format("d/m/y H:i");
+                $noteStruct["creator"] = $userRep->getUser($note->getCreatorUserID())->getName();
 
                 array_push($notesResult, $noteStruct);
             }
 
+            
+
             if(sizeof($groups) > 0) {
-                $this->render("dashboard", ["userGroups"=>$groups, "signedInUser"=>$user, "notes"=>$notesResult, "tasks"=>$tasksResult]);
+                
+                $groupMembers = $groupsRep->getGroupMembers($activeGroup);
+
+                $this->render("dashboard", ["userGroups"=>$groups, "signedInUser"=>$user, "notes"=>$notesResult, "tasks"=>$tasksResult, "groupMembers"=>$groupMembers]);
             } else {
                 $this->render("addGroup",["subtitle"=>"You don't belong to any group yet.", "userGroups"=>[], "signedInUser"=>$user]);
             }
@@ -117,7 +128,11 @@ class DefaultController extends AppController {
                 $taskStruct["checkState"] = $task->getIsCompleted();
                 $taskStruct["relTime"] = $relTime;
                 $taskStruct["assignedUser"] = $assignedUser;
-                $taskStruct["dueDate"] = is_null($task->getDueDate())?null:$task->getDueDate()->format("d/m/y H:i");
+                $taskStruct["assignedUserID"] = $task->getAssignedUserID();
+                $taskStruct["dueDate"] = is_null($task->getDueDate())?null:$task->getDueDate()->format("d/m/y");
+                $taskStruct["dueDateIso"] = is_null($task->getDueDate())?null:$task->getDueDate()->format("Y-m-d");
+                $taskStruct["createdAt"] = $task->getCreatedAt()->format("d/m/y H:i");
+                $taskStruct["creator"] = $userRep->getUser($task->getCreatorUserID())->getName();
 
                 array_push($tasksResult, $taskStruct);
             }
@@ -129,6 +144,8 @@ class DefaultController extends AppController {
                 $noteStruct["title"] = $note->getTitle();
                 $noteStruct["content"] = $note->getContent();
                 $noteStruct["relTime"] = $relTime;
+                $noteStruct["createdAt"] = $note->getCreatedAt()->format("d/m/y H:i");
+                $noteStruct["creator"] = $userRep->getUser($note->getCreatorUserID())->getName();
 
                 array_push($notesResult, $noteStruct);
             }
@@ -139,7 +156,27 @@ class DefaultController extends AppController {
                 $activeTab = $_REQUEST["t"];
             }
 
-            $this->render("tasknNotes", ["userGroups"=>$groups, "signedInUser"=>$user, "tasks"=>$tasksResult, "notes"=>$notesResult, "activeTab"=>$activeTab]);
+            $errMessage = false;
+            if(isset($_REQUEST["r"])) {
+                switch($_REQUEST["r"]) {
+                    case "invTitle": $errMessage = "Invalid title."; break;
+                    case "noUser": $errMessage = "Couldn't find specified user."; break;
+                    case "notMember": $errMessage = "Specified user is not a member of this group."; break;
+                    case "pastDate": $errMessage = "Given date from the past."; break;
+                    case "invContent": $errMessage = "Invalid note content."; break;
+                    case "noEntity": $errMessage = "Couldn't find requested object."; break;
+                }
+            }
+
+            $mode = ""; //c - create, e - edit
+
+            if(isset($_REQUEST["m"])) {
+                $mode = $_REQUEST["m"];
+            }
+
+            $groupMembers = $groupsRep->getGroupMembers($activeGroup);
+
+            $this->render("tasknNotes", ["userGroups"=>$groups, "signedInUser"=>$user, "tasks"=>$tasksResult, "notes"=>$notesResult, "groupMembers"=>$groupMembers, "activeTab"=>$activeTab, "err"=>$errMessage, "mode"=>$mode]);
         }else {
             $this->redirect("login?r=session_expired");
         }

@@ -1,4 +1,4 @@
-input {
+input, select, textarea {
     margin: 0.5rem 0 1.5rem;
     padding: 0.75rem 0.5rem;
     background: var(--third-light-2-color);
@@ -52,4 +52,14 @@ input {
 
 .checkbox input:checked ~ .checkmark:after {
 	display: block;
+}
+
+.ErrorBox {
+    font-size: 0.75em;
+    margin: 0;
+    padding: 0.5em;
+    background: var(--third-light-1-color);
+    border: solid 1px var(--third-color);
+    border-radius: 0.5em;
+    margin-bottom: 1em;
 }
