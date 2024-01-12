@@ -23,7 +23,20 @@ class APIController extends AppController {
         $task = $taskRep->getTask($_GET["taskID"]);
 
         if($task) {
-            $task->setIsCompleted(!$task->getIsCompleted());
+            $newState = !$task->getIsCompleted();
+            $task->setIsCompleted($newState);
+
+            $user = $this->getSignedInUserID();
+            $groupRep = new GroupRepository();
+            $currGroup = $groupRep->getGroup($user->getActiveGroupID());
+    
+            $eventRep = new EventRepository();
+            $events = $eventRep->getAllEvents($currGroup);
+
+            $eventRep->trimEventsCount($events);
+
+            $eventRep->createEvent($user, $currGroup,$newState?"complete":"uncomplete", $task);
+
             $taskRep->updateTask($task);
 
             echo json_encode(["status"=> "Success", "message"=> "Task toggled."]);

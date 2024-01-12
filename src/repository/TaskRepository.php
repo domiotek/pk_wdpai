@@ -7,7 +7,7 @@
         function getAllTasks(Group $group) {
             $conn = $this->database->connect();
     
-            $query = $conn->prepare("SELECT * FROM tasks NATURAL JOIN objects WHERE \"groupID\"=:id");
+            $query = $conn->prepare("SELECT * FROM tasks NATURAL JOIN objects WHERE \"groupID\"=:id ORDER BY title");
     
             $groupID = $group->getID();
             $query->bindParam(":id",$groupID, PDO::PARAM_INT);
@@ -32,6 +32,22 @@
 
             $query = $conn->prepare("SELECT * FROM tasks NATURAL JOIN objects WHERE \"taskID\"=:id;");
             $query->bindParam(":id",$taskID, PDO::PARAM_INT);
+            $query->execute();
+    
+            $taskData = $query->fetch(PDO::FETCH_ASSOC);
+    
+            if($taskData === false) {
+                return null;
+            }
+    
+            return new Task($taskData["taskID"],$taskData["objectID"], $taskData["creator"], new DateTime($taskData["createdAt"]), $taskData["title"], $taskData["finishState"], $taskData["assignedUser"], is_null($taskData["dueDate"])?null:new DateTime($taskData["dueDate"]));
+        }
+
+        function getTaskByObjectID(int $objectID) {
+            $conn = $this->database->connect();
+
+            $query = $conn->prepare("SELECT * FROM tasks NATURAL JOIN objects WHERE \"objectID\"=:id;");
+            $query->bindParam(":id",$objectID, PDO::PARAM_INT);
             $query->execute();
     
             $taskData = $query->fetch(PDO::FETCH_ASSOC);

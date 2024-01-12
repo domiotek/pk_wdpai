@@ -15,6 +15,7 @@
     <script src="/public/js/stripURL.js"></script>
     <script src="/public/js/main.js" defer></script>
     <script src="/public/js/modals.js" defer></script>
+    <script src="/public/js/dashboard.js" defer></script>
 
     <script src="https://kit.fontawesome.com/00b5fcc6a2.js" crossorigin="anonymous"></script>
 </head>
@@ -47,39 +48,34 @@
             <section class="RecentEvents">
                 <h5>Recent events</h5>
                 <div class="EventCardCarousel">
-                    <button type="button" title="Scroll left">
+                    <button type="button" title="Scroll left" data-direction="left">
                         <i class="fa-solid fa-chevron-left"></i>
                     </button>
                     <div>
-                        <div class="EventCard">
-                            <div class="EventCardHeader">
-                                <img src="/public/img/list-add.svg" alt="List addition">
-                                <h6>Camila created a task</h6>
-                            </div>
-                            <div class="EventCardBody">
-                                Do groceries
-                                
-                            </div>
-                            <div class="EventCardFooter">
-                                <span>1min ago</span>
-                            </div>
-                        </div>
-                        <div class="EventCard">
-                            <div class="EventCardHeader">
-                                <img src="/public/img/list-add.svg" alt="List addition">
-                                <h6>Camila created a task</h6>
-                            </div>
-                            <div class="EventCardBody">
-                                Do groceries
-                                
-                            </div>
-                            <div class="EventCardFooter">
-                                <span>1min ago</span>
-                            </div>
-                        </div>
+                        <?php 
+
+                            if(sizeof($events) > 0) {
+                                foreach($events as $event) {
+                                    echo "
+                                    <div class='EventCard'>
+                                        <div class='EventCardHeader'>
+                                            <img src='" . $event["iconURL"] . "' alt='Action icon'>
+                                            <h6>" . $event["header"] ."</h6>
+                                        </div>
+                                        <div class='EventCardBody'>" . $event["content"] . "</div>
+                                        <div class='EventCardFooter'>
+                                            <span>" . $event["relTime"] ."</span>
+                                        </div>
+                                    </div>
+                                    ";
+                                }
+                            }else {
+                                echo "<h5>Nothing happened yet</h5>";
+                            }
+                        ?>
                     </div>
                    
-                    <button type="button" title="Scroll right">
+                    <button type="button" title="Scroll right" data-direction="right">
                         <i class="fa-solid fa-chevron-right"></i>
                     </button>
                 </div>

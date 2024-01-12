@@ -311,7 +311,13 @@ class FormController extends AppController {
 
         $taskRep = new TaskRepository();
 
-        $taskRep->createTask($title, $currGroup, $user, $readyAssingedUser, $dueDate);
+        if($task = $taskRep->createTask($title, $currGroup, $user, $readyAssingedUser, $dueDate)) {
+            $eventRep = new EventRepository();
+            $events = $eventRep->getAllEvents($currGroup);
+            $eventRep->trimEventsCount($events);
+
+            $eventRep->createEvent($user,$currGroup,"create",$task);
+        }
 
         $this->redirect("d?t=t");
     }
@@ -341,7 +347,13 @@ class FormController extends AppController {
 
         $noteRep = new NoteRepository();
 
-        $noteRep->createNote($title, $currGroup, $user, $content);
+        if($note = $noteRep->createNote($title, $currGroup, $user, $content)) {
+            $eventRep = new EventRepository();
+            $events = $eventRep->getAllEvents($currGroup);
+            $eventRep->trimEventsCount($events);
+
+            $eventRep->createEvent($user,$currGroup,"create",$note);
+        }
 
         $this->redirect("d?t=n");
     }
@@ -408,6 +420,12 @@ class FormController extends AppController {
 
         $taskRep->updateTask($task);
 
+        $eventRep = new EventRepository();
+        $events = $eventRep->getAllEvents($currGroup);
+        $eventRep->trimEventsCount($events);
+
+        $eventRep->createEvent($user, $currGroup,"update", $task);
+
         $this->redirect("d?t=t");
     }
 
@@ -444,6 +462,16 @@ class FormController extends AppController {
         $note->setContent($content);
 
         $noteRep->updateNote($note);
+
+        $user = $this->getSignedInUserID();
+        $groupRep = new GroupRepository();
+        $currGroup = $groupRep->getGroup($user->getActiveGroupID());
+
+        $eventRep = new EventRepository();
+        $events = $eventRep->getAllEvents($currGroup);
+        $eventRep->trimEventsCount($events);
+
+        $eventRep->createEvent($user, $currGroup,"update", $note);
 
         $this->redirect("d?t=n");
     }

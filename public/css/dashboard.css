@@ -5,7 +5,7 @@
 .RecentEvents {
     height: 200px;
     background: var(--third-light-2-color);
-    padding: 0.5rem 1rem;
+    padding: 0.5rem 0.3rem;
     display: flex;
     flex-direction: column;
     box-shadow: 1px 1px 7px 0 #615f5f38;
@@ -30,7 +30,14 @@
 .EventCardCarousel > div {
     display: flex;
     margin: 0 2rem;
-    overflow-x: auto;
+    overflow-x: hidden;
+    width: 100%;
+    scroll-snap-type: x mandatory;
+    scroll-behavior: smooth;
+}
+
+.EventCardCarousel > div > h5 {
+    margin: auto;
 }
 
 .EventCard {
@@ -42,6 +49,8 @@
     flex-direction: column;
     flex-shrink: 0;
     margin: 0 0.5rem;
+    scroll-snap-align: start;
+    scroll-margin: 0.5rem;
 }
 
 .EventCardHeader {

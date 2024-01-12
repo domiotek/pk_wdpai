@@ -5,6 +5,7 @@ require_once __DIR__ . "/../repository/GroupRepository.php";
 require_once __DIR__ . "/../repository/NoteRepository.php";
 require_once __DIR__ . "/../repository/TaskRepository.php";
 require_once __DIR__ . "/../repository/UserRepository.php";
+require_once __DIR__ . "/../repository/EventRepository.php";
 require_once __DIR__ . "/../utils.php";
 
 class DefaultController extends AppController {
@@ -17,14 +18,17 @@ class DefaultController extends AppController {
             $notesRep = new NoteRepository();
             $tasksRep = new TaskRepository();
             $userRep = new UserRepository();
+            $eventRep = new EventRepository();
 
             $groups = $groupsRep->getUserGroups($user);
             $activeGroup = $groupsRep->getGroup($user->getActiveGroupID());
 
             $notes = $notesRep->getAllNotes($activeGroup);
             $tasks = $tasksRep->getAllTasks($activeGroup);
+            $events = $eventRep->getAllEvents($activeGroup);
             $tasksResult = [];
             $notesResult = [];
+            $eventsResult = [];
 
             foreach($tasks as $task) {
                 $taskStruct = [];
@@ -59,13 +63,51 @@ class DefaultController extends AppController {
                 array_push($notesResult, $noteStruct);
             }
 
-            
+            foreach($events as $event) {
+                $header = "";
+                $content = "";
+                $iconURL = "";
+
+                $user = $userRep->getUser($event->getInitiatorID());
+
+                $target = $event->getTargetType()=="task"?$tasksRep->getTaskByObjectID($event->getTargetID()) : $notesRep->getNoteByObjectID($event->getTargetID());
+
+                switch($event->getEventType()) {
+                    case "create": 
+                        $header = $user->getName() . " created a new " . $event->getTargetType();
+                        $content = $target->getTitle();
+                        $iconURL = "/public/img/entity-added.svg";
+                    break;
+                    case "update":
+                        $header = $user->getName() . " updated " . $event->getTargetType();
+                        $content = $target->getTitle();
+                        $iconURL = "/public/img/entity-edited.svg";
+                    break;
+                    case "complete":
+                        $header = $user->getName() . " marked task as complete";
+                        $content = $target->getTitle();
+                        $iconURL = "/public/img/task-completed.svg";
+                    break;
+                    case "uncomplete":
+                        $header = $user->getName() . " marked task as incomplete";
+                        $content = $target->getTitle();
+                        $iconURL = "/public/img/task-uncompleted.svg";
+                    break;
+                }
+
+                array_push($eventsResult, [
+                    "header"=> $header,
+                    "content"=> $content,
+                    "relTime"=> time2str($event->getWhen()->getTimestamp()),
+                    "iconURL"=> $iconURL
+                ]);
+            }
 
             if(sizeof($groups) > 0) {
                 
                 $groupMembers = $groupsRep->getGroupMembers($activeGroup);
 
-                $this->render("dashboard", ["userGroups"=>$groups, "signedInUser"=>$user, "notes"=>$notesResult, "tasks"=>$tasksResult, "groupMembers"=>$groupMembers]);
+                $this->render("dashboard", ["userGroups"=>$groups, "signedInUser"=>$user, "notes"=>$notesResult, "tasks"=>$tasksResult, "groupMembers"=>$groupMembers, "events"=>$eventsResult]);
             } else {
                 $this->render("addGroup",["subtitle"=>"You don't belong to any group yet.", "userGroups"=>[], "signedInUser"=>$user]);
             }

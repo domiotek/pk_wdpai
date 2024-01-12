@@ -42,6 +42,22 @@
             return new Note($noteData["noteID"],$noteData["objectID"], $noteData["creator"], new DateTime($noteData["createdAt"]), $noteData["title"], $noteData["content"]);
         }
 
+        function getNoteByObjectID(int $objectID) {
+            $conn = $this->database->connect();
+
+            $query = $conn->prepare("SELECT * FROM notes NATURAL JOIN objects WHERE \"objectID\"=:id;");
+            $query->bindParam(":id",$objectID, PDO::PARAM_INT);
+            $query->execute();
+    
+            $noteData = $query->fetch(PDO::FETCH_ASSOC);
+    
+            if($noteData === false) {
+                return null;
+            }
+    
+            return new Note($noteData["noteID"],$noteData["objectID"], $noteData["creator"], new DateTime($noteData["createdAt"]), $noteData["title"], $noteData["content"]);
+        }
+
         function createNote(string $title, Group $targetGroup, User $creator, string $content) {
             $conn = $this->database->connect();
 
