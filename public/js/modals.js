@@ -91,3 +91,26 @@ document.querySelector("#AddEntityButton")?.addEventListener("click",e=>{
         content.classList.add("Shown");
     }else console.error("Invalid entity list");
 });
+
+document.querySelectorAll(".checkbox").forEach(elem=>elem.addEventListener("click",async e=>{
+    e.preventDefault();
+
+    if(e.target.localName=="span") {
+
+        try {
+            const ID = JSON.parse(e.target.closest(".EntityPanel").dataset.details).ID;
+            const response = await fetch(`/toggleTaskState?taskID=${ID}`);
+            if(response.ok) {
+                const input = e.target.previousElementSibling;
+    
+                input.checked = !input.checked;
+    
+                return;
+            }
+        } catch (error) {
+            //Couldn't refresh task's visual state - refresh to get latest data.
+            window.location.reload();
+        }
+       
+    }
+}));
