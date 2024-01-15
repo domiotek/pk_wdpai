@@ -4,10 +4,10 @@
 
     class TaskRepository extends Repository {
         
-        function getAllTasks(Group $group) {
+        function getTasks(Group $group, int $limit = 0) {
             $conn = $this->database->connect();
     
-            $query = $conn->prepare("SELECT * FROM tasks NATURAL JOIN objects WHERE \"groupID\"=:id ORDER BY title");
+            $query = $conn->prepare("SELECT * FROM tasks NATURAL JOIN objects WHERE \"groupID\"=:id ORDER BY title " . ($limit>0?"LIMIT $limit;":";"));
     
             $groupID = $group->getID();
             $query->bindParam(":id",$groupID, PDO::PARAM_INT);

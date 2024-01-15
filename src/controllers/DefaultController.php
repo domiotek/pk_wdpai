@@ -23,8 +23,8 @@ class DefaultController extends AppController {
             $groups = $groupsRep->getUserGroups($user);
             $activeGroup = $groupsRep->getGroup($user->getActiveGroupID());
 
-            $notes = $notesRep->getAllNotes($activeGroup);
-            $tasks = $tasksRep->getAllTasks($activeGroup);
+            $notes = $notesRep->getNotes($activeGroup,3);
+            $tasks = $tasksRep->getTasks($activeGroup,3);
             $events = $eventRep->getAllEvents($activeGroup);
             $tasksResult = [];
             $notesResult = [];
@@ -154,8 +154,8 @@ class DefaultController extends AppController {
             $groups = $groupsRep->getUserGroups($user);
             $activeGroup = $groupsRep->getGroup($user->getActiveGroupID());
 
-            $notes = $notesRep->getAllNotes($activeGroup);
-            $tasks = $tasksRep->getAllTasks($activeGroup);
+            $notes = $notesRep->getNotes($activeGroup);
+            $tasks = $tasksRep->getTasks($activeGroup);
             $tasksResult = [];
             $notesResult = [];
 

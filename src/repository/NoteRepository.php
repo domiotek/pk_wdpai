@@ -3,10 +3,10 @@
     require_once __DIR__ . "/../models/Note.php";
 
     class NoteRepository extends Repository {
-        function getAllNotes(Group $group) {
+        function getNotes(Group $group, int $limit = 0) {
             $conn = $this->database->connect();
     
-            $query = $conn->prepare("SELECT * FROM notes NATURAL JOIN objects WHERE \"groupID\"=:id");
+            $query = $conn->prepare("SELECT * FROM notes NATURAL JOIN objects WHERE \"groupID\"=:id " . ($limit>0?"LIMIT $limit;":";"));
     
             $groupID = $group->getID();
             $query->bindParam(":id",$groupID, PDO::PARAM_INT);
