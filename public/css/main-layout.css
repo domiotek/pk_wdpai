@@ -42,6 +42,8 @@ nav a.active i {
 header {
     position: fixed;
     background: white;
+    z-index: 99;
+    box-shadow: 0 1px 7px 0 #65656529;
 }
 
 header >a {
@@ -61,6 +63,7 @@ header > a > img {
 @media screen and (min-width: 769px) {
     header {
         position: static;
+        box-shadow: none;
     }
 
     main {
