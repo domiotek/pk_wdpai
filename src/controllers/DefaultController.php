@@ -10,6 +10,49 @@ require_once __DIR__ . "/../utils.php";
 
 class DefaultController extends AppController {
 
+    private function prepateTaskResults(array $tasks, UserRepository $userRep) {
+        $result = [];
+
+        foreach($tasks as $task) {
+            $relTime = time2str($task->getCreatedAt()->getTimestamp());
+            $assignedUser = is_null($task->getAssignedUserID())?null:$userRep->getUser($task->getAssignedUserID())->getName();
+
+            array_push($result,[
+                "ID"=>$task->getTaskID(),
+                "title"=>$task->getTitle(),
+                "checkState"=>$task->getIsCompleted(),
+                "relTime"=> $relTime,
+                "assignedUser"=>$assignedUser,
+                "assignedUserID"=>$task->getAssignedUserID(),
+                "dueDate"=> is_null($task->getDueDate())?null:$task->getDueDate()->format("d/m/y"),
+                "dueDateIso"=> is_null($task->getDueDate())?null:$task->getDueDate()->format("Y-m-d"),
+                "createdAt"=>$task->getCreatedAt()->format("d/m/y H:i"),
+                "creator"=>$userRep->getUser($task->getCreatorUserID())->getName()
+            ]);
+        }
+
+        return $result;
+    }
+
+    public function prepareNoteResults(array $notes, UserRepository $userRep) {
+        $result = [];
+
+        foreach($notes as $note) {
+            $relTime = time2str($note->getCreatedAt()->getTimestamp());
+            
+            array_push($notesResult, [
+                "ID"=> $note->getNoteID(),
+                "title"=> $note->getTitle(),
+                "content"=> $note->getContent(),
+                "relTime"=> $relTime,
+                "createdAt"=> $note->getCreatedAt()->format("d/m/y H:i"),
+                "creator"=> $userRep->getUser($note->getCreatorUserID())->getName()
+            ]);
+        }
+
+        return $result;
+    }
+
     public function home() {
         if($this->isAuthenticated()) {
             $user = $this->getSignedInUserID();
@@ -21,93 +64,64 @@ class DefaultController extends AppController {
             $eventRep = new EventRepository();
 
             $groups = $groupsRep->getUserGroups($user);
-            $activeGroup = $groupsRep->getGroup($user->getActiveGroupID());
-
-            $notes = $notesRep->getNotes($activeGroup,3);
-            $tasks = $tasksRep->getTasks($activeGroup,3);
-            $events = $eventRep->getAllEvents($activeGroup);
-            $tasksResult = [];
-            $notesResult = [];
-            $eventsResult = [];
-
-            foreach($tasks as $task) {
-                $taskStruct = [];
-
-                $relTime = time2str($task->getCreatedAt()->getTimestamp());
-                $assignedUser = is_null($task->getAssignedUserID())?null:$userRep->getUser($task->getAssignedUserID())->getName();
-                
-                $taskStruct["ID"] = $task->getTaskID();
-                $taskStruct["title"] = $task->getTitle();
-                $taskStruct["checkState"] = $task->getIsCompleted();
-                $taskStruct["relTime"] = $relTime;
-                $taskStruct["assignedUser"] = $assignedUser;
-                $taskStruct["assignedUserID"] = $task->getAssignedUserID();
-                $taskStruct["dueDate"] = is_null($task->getDueDate())?null:$task->getDueDate()->format("d/m/y");
-                $taskStruct["dueDateIso"] = is_null($task->getDueDate())?null:$task->getDueDate()->format("Y-m-d");
-                $taskStruct["createdAt"] = $task->getCreatedAt()->format("d/m/y H:i");
-                $taskStruct["creator"] = $userRep->getUser($task->getCreatorUserID())->getName();
-
-                array_push($tasksResult, $taskStruct);
-            }
-
-            foreach($notes as $note) {
-                $noteStruct = [];
-                $relTime = time2str($note->getCreatedAt()->getTimestamp());
-                $noteStruct["ID"] = $note->getNoteID();
-                $noteStruct["title"] = $note->getTitle();
-                $noteStruct["content"] = $note->getContent();
-                $noteStruct["relTime"] = $relTime;
-                $noteStruct["createdAt"] = $note->getCreatedAt()->format("d/m/y H:i");
-                $noteStruct["creator"] = $userRep->getUser($note->getCreatorUserID())->getName();
-
-                array_push($notesResult, $noteStruct);
-            }
-
-            foreach($events as $event) {
-                $header = "";
-                $content = "";
-                $iconURL = "";
-
-                $user = $userRep->getUser($event->getInitiatorID());
-
-                $target = $event->getTargetType()=="task"?$tasksRep->getTaskByObjectID($event->getTargetID()) : $notesRep->getNoteByObjectID($event->getTargetID());
-
-                switch($event->getEventType()) {
-                    case "create": 
-                        $header = $user->getName() . " created a new " . $event->getTargetType();
-                        $content = $target->getTitle();
-                        $iconURL = "/public/img/entity-added.svg";
-                    break;
-                    case "update":
-                        $header = $user->getName() . " updated " . $event->getTargetType();
-                        $content = $target->getTitle();
-                        $iconURL = "/public/img/entity-edited.svg";
-                    break;
-                    case "complete":
-                        $header = $user->getName() . " marked task as complete";
-                        $content = $target->getTitle();
-                        $iconURL = "/public/img/task-completed.svg";
-                    break;
-                    case "uncomplete":
-                        $header = $user->getName() . " marked task as incomplete";
-                        $content = $target->getTitle();
-                        $iconURL = "/public/img/task-uncompleted.svg";
-                    break;
-                }
-
-                array_push($eventsResult, [
-                    "header"=> $header,
-                    "content"=> $content,
-                    "relTime"=> time2str($event->getWhen()->getTimestamp()),
-                    "iconURL"=> $iconURL
-                ]);
-            }
 
             if(sizeof($groups) > 0) {
-                
+                $activeGroup = $groupsRep->getGroup($user->getActiveGroupID());
+
+                $notes = $notesRep->getNotes($activeGroup,3);
+                $tasks = $tasksRep->getTasks($activeGroup,3);
+                $events = $eventRep->getAllEvents($activeGroup);
+    
+                $tasksResult = $this->prepateTaskResults($tasks, $userRep);
+                $notesResult = $this->prepareNoteResults($notes, $userRep);
+
+                $eventsResult = [];
+    
+                foreach($events as $event) {
+                    $header = "";
+                    $content = "";
+                    $iconURL = "";
+    
+                    $user = $userRep->getUser($event->getInitiatorID());
+    
+                    $target = $event->getTargetType()=="task"?$tasksRep->getTaskByObjectID($event->getTargetID()) : $notesRep->getNoteByObjectID($event->getTargetID());
+    
+                    switch($event->getEventType()) {
+                        case "create": 
+                            $header = $user->getName() . " created a new " . $event->getTargetType();
+                            $content = $target->getTitle();
+                            $iconURL = "/public/img/entity-added.svg";
+                        break;
+                        case "update":
+                            $header = $user->getName() . " updated " . $event->getTargetType();
+                            $content = $target->getTitle();
+                            $iconURL = "/public/img/entity-edited.svg";
+                        break;
+                        case "complete":
+                            $header = $user->getName() . " marked task as complete";
+                            $content = $target->getTitle();
+                            $iconURL = "/public/img/task-completed.svg";
+                        break;
+                        case "uncomplete":
+                            $header = $user->getName() . " marked task as incomplete";
+                            $content = $target->getTitle();
+                            $iconURL = "/public/img/task-uncompleted.svg";
+                        break;
+                    }
+    
+                    array_push($eventsResult, [
+                        "header"=> $header,
+                        "content"=> $content,
+                        "relTime"=> time2str($event->getWhen()->getTimestamp()),
+                        "iconURL"=> $iconURL
+                    ]);
+                    
+                }
+
                 $groupMembers = $groupsRep->getGroupMembers($activeGroup);
 
                 $this->render("dashboard", ["userGroups"=>$groups, "signedInUser"=>$user, "notes"=>$notesResult, "tasks"=>$tasksResult, "groupMembers"=>$groupMembers, "events"=>$eventsResult]);
+
             } else {
                 $this->render("addGroup",["subtitle"=>"You don't belong to any group yet.", "userGroups"=>[], "signedInUser"=>$user]);
             }
@@ -156,41 +170,9 @@ class DefaultController extends AppController {
 
             $notes = $notesRep->getNotes($activeGroup);
             $tasks = $tasksRep->getTasks($activeGroup);
-            $tasksResult = [];
-            $notesResult = [];
 
-            foreach($tasks as $task) {
-                $taskStruct = [];
-
-                $relTime = time2str($task->getCreatedAt()->getTimestamp());
-                $assignedUser = is_null($task->getAssignedUserID())?null:$userRep->getUser($task->getAssignedUserID())->getName();
-                
-                $taskStruct["ID"] = $task->getTaskID();
-                $taskStruct["title"] = $task->getTitle();
-                $taskStruct["checkState"] = $task->getIsCompleted();
-                $taskStruct["relTime"] = $relTime;
-                $taskStruct["assignedUser"] = $assignedUser;
-                $taskStruct["assignedUserID"] = $task->getAssignedUserID();
-                $taskStruct["dueDate"] = is_null($task->getDueDate())?null:$task->getDueDate()->format("d/m/y");
-                $taskStruct["dueDateIso"] = is_null($task->getDueDate())?null:$task->getDueDate()->format("Y-m-d");
-                $taskStruct["createdAt"] = $task->getCreatedAt()->format("d/m/y H:i");
-                $taskStruct["creator"] = $userRep->getUser($task->getCreatorUserID())->getName();
-
-                array_push($tasksResult, $taskStruct);
-            }
-
-            foreach($notes as $note) {
-                $noteStruct = [];
-                $relTime = time2str($note->getCreatedAt()->getTimestamp());
-                $noteStruct["ID"] = $note->getNoteID();
-                $noteStruct["title"] = $note->getTitle();
-                $noteStruct["content"] = $note->getContent();
-                $noteStruct["relTime"] = $relTime;
-                $noteStruct["createdAt"] = $note->getCreatedAt()->format("d/m/y H:i");
-                $noteStruct["creator"] = $userRep->getUser($note->getCreatorUserID())->getName();
-
-                array_push($notesResult, $noteStruct);
-            }
+            $tasksResult = $this->prepateTaskResults($tasks, $userRep);
+            $notesResult = $this->prepareNoteResults($notes, $userRep);
 
             $activeTab = "t";
 
