@@ -37,6 +37,8 @@
             </label>
 
             <button type="submit">Login</button>
+
+            <h5>Don't have an account yet? <a href="/register">Register now</a></h5>
         </form>
     </div>
 </body>

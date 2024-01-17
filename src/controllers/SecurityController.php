@@ -36,6 +36,42 @@ class SecurityController extends AppController {
         echo "Complete hash: $hashed";
     }
 
+    public function register() {
+        if($this->isAuthenticated()) {
+            $this->redirect("home");
+        }
+
+        if(!$this->isPOST()) {
+            return $this->render("register");
+        }
+
+
+        $userRepository = new UserRepository();
+
+        $email = $_POST["username"];
+        $password = $_POST["password"];
+        $cpassword = $_POST["cpassword"];
+        $name = $_POST["name"];
+        
+        if($password != $cpassword) {
+            return $this->render("register", ["message"=>"Passwords don't match.", "email"=>$email, "name"=>$name]);
+        }
+
+        $userCheck = $userRepository->getUser($email);
+        if($userCheck) {
+            return $this->render("register", ["message"=>"User already exists.", "email"=>$email, "name"=>$name]);
+        }
+
+
+        $user = $userRepository->createUser($email, $this->hashPassword($password),$name);
+
+        if($user) {
+            $this->redirect("login?r=after_register");
+        }else {
+            return $this->render("login", ["message"=>"Couldn't register you right now. Try again in a bit.", "email"=>$email, "name"=>$name]);
+        }
+    }
+
     public function login() {
 
         if($this->isAuthenticated()) {
@@ -48,6 +84,8 @@ class SecurityController extends AppController {
             if(isset($_REQUEST["r"])) {
                 if($_REQUEST["r"]=="session_expired") {
                     $message = "Your session expired";
+                }else if($_REQUEST["r"]=="after_register") {
+                    $message = "Registration completed. You can login now.";
                 }
             }
             return $this->render("login", ["message"=>$message]);

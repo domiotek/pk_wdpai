@@ -11,6 +11,7 @@ Router::get("new", "DefaultController");
 Router::get("d", "DefaultController");
 Router::get("group", "DefaultController");
 
+Router::post("register","SecurityController");
 Router::post("login", "SecurityController");
 Router::post("logout","SecurityController");
 Router::get("passwordTest","SecurityController");

@@ -5,6 +5,20 @@ require_once __DIR__ . "/../models/User.php";
 
 
 class UserRepository extends Repository {
+
+    public function createUser(string $email, string $password, string $name) {
+        $conn = $this->database->connect();
+        $query = $conn->prepare("INSERT INTO users(email, \"password\", \"name\") VALUES(?,?,?);");
+
+        $query->execute([
+            $email,
+            $password,
+            $name
+        ]);
+
+        return $this->getUser($email);
+    }
+
     public function getUser(string|int $input): ?User {
         $conn = $this->database->connect();
 
