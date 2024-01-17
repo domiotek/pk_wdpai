@@ -92,7 +92,7 @@
                                 foreach ($tasks as $task) {
 
                                     echo "
-                                    <li class='EntityPanel Task' data-details='" . json_encode($task) . "'>
+                                    <li class='EntityPanel Task' data-details='" . json_encode($task, JSON_HEX_APOS) . "'>
                                         <label class='checkbox'>
                                             <input type='checkbox' " . ($task["checkState"]?"checked='1'":"") . ">
                                             <span class='checkmark'></span>
@@ -125,7 +125,7 @@
                             echo "<ul>";
                             foreach ($notes as $note) {
                                 echo "
-                                <li class='EntityPanel Note' data-details='" . json_encode($note) . "'>
+                                <li class='EntityPanel Note' data-details='" . json_encode($note, JSON_HEX_APOS) . "'>
                                     <div class='NoteHeader'>
                                         <h3>" . $note["title"] . "</h3>
                                         <h6>" . $note["relTime"] . "</h6>

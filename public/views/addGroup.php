@@ -69,7 +69,7 @@
     <div id="AccountPopup">
         <div class="PopupHeader">
             <i class="far fa-user"> </i>
-            <span>Damian</span>
+            <span><?php echo $signedInUser->getName()?></span>
         </div>
         
         <h4>Your groups <a href="/new">Add new</a></h4>

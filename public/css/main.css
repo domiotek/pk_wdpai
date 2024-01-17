@@ -109,6 +109,7 @@ main {
   padding: 1em 0.5em;
   box-shadow: 0px 2px 10px 0 #95959573;
   border-radius: 0.5em;
+  z-index: 99;
 }
 
 #AccountPopup.shown {

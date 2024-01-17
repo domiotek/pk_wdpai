@@ -40,7 +40,7 @@ class DefaultController extends AppController {
         foreach($notes as $note) {
             $relTime = time2str($note->getCreatedAt()->getTimestamp());
             
-            array_push($notesResult, [
+            array_push($result, [
                 "ID"=> $note->getNoteID(),
                 "title"=> $note->getTitle(),
                 "content"=> $note->getContent(),
@@ -55,7 +55,7 @@ class DefaultController extends AppController {
 
     public function home() {
         if($this->isAuthenticated()) {
-            $user = $this->getSignedInUserID();
+            $signedInUser = $this->getSignedInUserID();
         
             $groupsRep = new GroupRepository();
             $notesRep = new NoteRepository();
@@ -63,10 +63,10 @@ class DefaultController extends AppController {
             $userRep = new UserRepository();
             $eventRep = new EventRepository();
 
-            $groups = $groupsRep->getUserGroups($user);
+            $groups = $groupsRep->getUserGroups($signedInUser);
 
             if(sizeof($groups) > 0) {
-                $activeGroup = $groupsRep->getGroup($user->getActiveGroupID());
+                $activeGroup = $groupsRep->getGroup($signedInUser->getActiveGroupID());
 
                 $notes = $notesRep->getNotes($activeGroup,3);
                 $tasks = $tasksRep->getTasks($activeGroup,3);
@@ -120,10 +120,10 @@ class DefaultController extends AppController {
 
                 $groupMembers = $groupsRep->getGroupMembers($activeGroup);
 
-                $this->render("dashboard", ["userGroups"=>$groups, "signedInUser"=>$user, "notes"=>$notesResult, "tasks"=>$tasksResult, "groupMembers"=>$groupMembers, "events"=>$eventsResult]);
+                $this->render("dashboard", ["userGroups"=>$groups, "signedInUser"=>$signedInUser, "notes"=>$notesResult, "tasks"=>$tasksResult, "groupMembers"=>$groupMembers, "events"=>$eventsResult]);
 
             } else {
-                $this->render("addGroup",["subtitle"=>"You don't belong to any group yet.", "userGroups"=>[], "signedInUser"=>$user]);
+                $this->render("addGroup",["subtitle"=>"You don't belong to any group yet.", "userGroups"=>[], "signedInUser"=>$signedInUser]);
             }
         }else {
             $this->redirect("login?r=session_expired");
