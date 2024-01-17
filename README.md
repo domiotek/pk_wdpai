@@ -25,6 +25,9 @@ In each group user can create, edit, remove, complete and uncomplete tasks as we
 #### Joining or creating a new group
 ![Creating or joining group](readme-images/new.png)
 
+#### ERD of the database
+![ERD](readme-images/erd.png)
+
 ## Requirements
 
 This app requires following frameworks and modules:
