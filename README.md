@@ -14,16 +14,16 @@ In each group user can create, edit, remove, complete and uncomplete tasks as we
 
 ## Presentation
 #### Dashboard
-![Dashboard](readme-images\dashboard.png)
+![Dashboard](readme-images/dashboard.png)
 
 #### Task Details
-![Task details ](readme-images\task-edit.png)
+![Task details ](readme-images/task-edit.png)
 
 #### Group management
-![group management](readme-images\group.png)
+![group management](readme-images/group.png)
 
 #### Joining or creating a new group
-![Creating or joining group](readme-images\new.png)
+![Creating or joining group](readme-images/new.png)
 
 ## Requirements
 
