@@ -11,6 +11,8 @@
 
     <script src="/public/js/stripURL.js"></script>
     <title>Taskmate</title>
+
+    <link rel="icon" href="/public/img/logo.png" />
 </head>
 <body>
     <div class="ContentWrapper">

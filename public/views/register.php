@@ -10,6 +10,8 @@
     <link rel="stylesheet" href="/public//css//form-controls.css">
 
     <title>Taskmate</title>
+
+    <link rel="icon" href="/public/img/logo.png" />
 </head>
 <body>
     <div class="ContentWrapper">
