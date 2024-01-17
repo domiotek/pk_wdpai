@@ -31,4 +31,6 @@ Router::post("deleteTask", "FormController");
 Router::post("deleteNote", "FormController");
 Router::get("toggleTaskState", "APIController");
 
+Router::setDefaultRoute("home");
+
 Router::run($path);

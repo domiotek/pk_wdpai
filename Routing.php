@@ -6,6 +6,7 @@ require_once "src/controllers/FormController.php";
 require_once "src/controllers/APIController.php";
 
 class Router {
+    private static $defaultRoute = "";
     public static $routes;
 
 
@@ -17,11 +18,25 @@ class Router {
         self::$routes[$url] = $controller;
     }
 
+    public static function setDefaultRoute($url) {
+        if(!array_key_exists($url, self::$routes)) {
+            die("Couldn't set default route - " . $url . " is not defined.");
+        }
+
+        self::$defaultRoute = $url;
+    }
+
     public static function run($url) {
         $action = explode("/", $url)[0];
 
         if(!array_key_exists($action, self::$routes)) {
-            die("Wrong url!");
+            if(self::$defaultRoute !== "") {
+                header("location: " . self::$defaultRoute);
+                die();
+            }else {
+                http_response_code(404);
+                die();
+            }
         }
         
         $controller = self::$routes[$action];
