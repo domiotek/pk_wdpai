@@ -21,21 +21,6 @@ class SecurityController extends AppController {
         return $salt . $hash;
     }
 
-    public function passwordTest() {
-
-        if(!isset($_REQUEST["password"])) {
-            echo "Pass password to hash as 'password' query param.";
-            die();
-        }
-
-        $hashed = $this->hashPassword($_REQUEST["password"]);
-
-        echo "Input: " . $_REQUEST["password"] . "<br>";
-        echo "Salt: " . substr($hashed,0,10) ."<br>";
-        echo "Hash: " . substr($hashed,10) ."<br><br>";
-        echo "Complete hash: $hashed";
-    }
-
     public function register() {
         if($this->isAuthenticated()) {
             $this->redirect("home");
