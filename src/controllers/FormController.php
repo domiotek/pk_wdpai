@@ -18,8 +18,8 @@ class FormController extends AppController {
         $userGroups = $groupRepository->getUserOwnedGroups($user);
 
 
-        if(strlen($name) < 2 || strlen($name) > 30 || sizeof($userGroups) >= 3) {
-            $errCode = sizeof($userGroups) >= 3?"cMaxGrp":"cInvName";
+        if(strlen($name) < 2 || strlen($name) > 30 || sizeof($userGroups) > 3) {
+            $errCode = sizeof($userGroups) > 3?"cMaxGrp":"cInvName";
 
             $this->redirect("new?r=$errCode");
             return;
